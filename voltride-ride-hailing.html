@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VoltRide Indonesia — Proposal Kemitraan 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --volt: #00D97E;
+      --volt-dark: #00A85F;
+      --volt-deep: #006B3E;
+      --volt-pale: #E6FFF4;
+      --night: #0A0E14;
+      --night-2: #111820;
+      --night-3: #1A2535;
+      --night-4: #243042;
+      --slate: #8B9EB8;
+      --slate-light: #C4CFDE;
+      --white: #FFFFFF;
+      --amber: #FFB84D;
+      --coral: #FF5C5C;
+      --blue-accent: #4D9EFF;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--night);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(10, 14, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 217, 126, 0.12);
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--volt);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--slate);
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      background: var(--volt);
+      color: var(--night);
+      padding: 0.5rem 1.25rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .nav-cta:hover {
+      background: #00F090;
+      transform: translateY(-1px);
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 3rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 800px 600px at 70% 50%, rgba(0, 217, 126, 0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 400px 400px at 20% 80%, rgba(77, 158, 255, 0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 217, 126, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 217, 126, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0, 217, 126, 0.1);
+      border: 1px solid rgba(0, 217, 126, 0.25);
+      color: var(--volt);
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      margin-bottom: 1.5rem;
+      width: fit-content;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--volt);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.8);
+      }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: normal;
+      color: var(--volt);
+      position: relative;
+    }
+
+    .hero-sub {
+      color: var(--slate-light);
+      font-size: 1.1rem;
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-sub strong {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--volt);
+      color: var(--night);
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.15s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary:hover {
+      background: #00F090;
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: border-color 0.15s, background 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 2.5rem;
+    }
+
+    .stat {
+      padding-right: 2rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat:last-child {
+      border-right: none;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--volt);
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+
+    .stat-label {
+      color: var(--slate);
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      line-height: 1.4;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 6rem 3rem;
+    }
+
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--volt);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-num {
+      font-size: 0.75rem;
+      color: rgba(0, 217, 126, 0.4);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    h2 em {
+      font-style: normal;
+      color: var(--volt);
+    }
+
+    .section-intro {
+      color: var(--slate-light);
+      font-size: 1rem;
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 0;
+    }
+
+    /* --- EXEC SUMMARY --- */
+    .exec-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .exec-card {
+      background: var(--night-2);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .exec-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.01em;
+    }
+
+    .exec-card p {
+      color: var(--slate-light);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .highlight-card {
+      background: linear-gradient(135deg, rgba(0, 217, 126, 0.08), rgba(0, 217, 126, 0.03));
+      border-color: rgba(0, 217, 126, 0.2);
+    }
+
+    /* --- MASALAH PASAR --- */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .problem-card {
+      background: var(--night-2);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .problem-card:hover {
+      border-color: rgba(0, 217, 126, 0.2);
+    }
+
+    .problem-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255, 92, 92, 0.12);
+      border: 1px solid rgba(255, 92, 92, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .problem-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .problem-card p {
+      color: var(--slate);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* --- SOLUSI --- */
+    .solution-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .solution-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .solution-item {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+
+    .solution-dot {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 217, 126, 0.12);
+      border: 1px solid rgba(0, 217, 126, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--volt);
+      flex-shrink: 0;
+    }
+
+    .solution-text h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .solution-text p {
+      color: var(--slate);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* PHONE MOCKUP */
+    .phone-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone {
+      width: 260px;
+      background: var(--night-3);
+      border-radius: 36px;
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      padding: 12px;
+      box-shadow: 0 0 60px rgba(0, 217, 126, 0.1);
+    }
+
+    .phone-inner {
+      background: var(--night-4);
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px 8px;
+      font-size: 10px;
+      color: var(--slate);
+    }
+
+    .phone-app-header {
+      background: var(--volt);
+      color: var(--night);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .phone-app-header .app-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .phone-app-header .app-sub {
+      font-size: 0.65rem;
+      opacity: 0.7;
+      margin-top: 2px;
+    }
+
+    .phone-map-area {
+      height: 120px;
+      background: linear-gradient(180deg, #1A2535 0%, #0F1A28 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-dot {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--volt);
+      box-shadow: 0 0 0 3px rgba(0, 217, 126, 0.25);
+    }
+
+    .map-line {
+      position: absolute;
+      height: 2px;
+      background: rgba(0, 217, 126, 0.3);
+      transform-origin: left center;
+    }
+
+    .phone-ride-cards {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ride-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ride-card .ride-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .ride-card .ride-sub {
+      font-size: 0.6rem;
+      color: var(--slate);
+      margin-top: 1px;
+    }
+
+    .ride-card .ride-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--volt);
+    }
+
+    .ride-card.active {
+      background: rgba(0, 217, 126, 0.12);
+      border: 1px solid rgba(0, 217, 126, 0.25);
+    }
+
+    .phone-book-btn {
+      background: var(--volt);
+      color: var(--night);
+      border-radius: 10px;
+      padding: 10px;
+      margin: 0 12px 12px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* --- LAYANAN --- */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: var(--night-2);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .service-card:hover {
+      border-color: rgba(0, 217, 126, 0.25);
+      transform: translateY(-4px);
+    }
+
+    .service-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .icon-green {
+      background: rgba(0, 217, 126, 0.12);
+      border: 1px solid rgba(0, 217, 126, 0.2);
+    }
+
+    .icon-blue {
+      background: rgba(77, 158, 255, 0.12);
+      border: 1px solid rgba(77, 158, 255, 0.2);
+    }
+
+    .icon-amber {
+      background: rgba(255, 184, 77, 0.12);
+      border: 1px solid rgba(255, 184, 77, 0.2);
+    }
+
+    .service-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .service-card p {
+      color: var(--slate);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .service-tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-green {
+      background: rgba(0, 217, 126, 0.1);
+      color: var(--volt);
+    }
+
+    .tag-blue {
+      background: rgba(77, 158, 255, 0.1);
+      color: var(--blue-accent);
+    }
+
+    .tag-amber {
+      background: rgba(255, 184, 77, 0.1);
+      color: var(--amber);
+    }
+
+    /* --- KEUNGGULAN --- */
+    .advantages-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .adv-card {
+      background: var(--night-2);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 1.75rem;
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+
+    .adv-card:hover {
+      border-color: rgba(0, 217, 126, 0.15);
+    }
+
+    .adv-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: rgba(0, 217, 126, 0.2);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .adv-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .adv-card p {
+      color: var(--slate);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* --- PERBANDINGAN --- */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--night-2);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .compare-table th {
+      padding: 1.25rem 1.5rem;
+      text-align: left;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .compare-table th:first-child {
+      color: var(--slate);
+      width: 30%;
+    }
+
+    .compare-table th.volt-col {
+      color: var(--volt);
+    }
+
+    .compare-table th.competitor-col {
+      color: var(--slate);
+    }
+
+    .compare-table td {
+      padding: 1rem 1.5rem;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .compare-table td:first-child {
+      color: var(--slate-light);
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .check {
+      color: var(--volt);
+      font-size: 1.1rem;
+    }
+
+    .cross {
+      color: rgba(255, 92, 92, 0.6);
+      font-size: 1.1rem;
+    }
+
+    .partial {
+      color: var(--amber);
+      font-size: 1.1rem;
+    }
+
+    /* --- ROADMAP --- */
+    .roadmap {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      left: 22px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, var(--volt), rgba(0, 217, 126, 0.1));
+    }
+
+    .roadmap-item {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+      padding: 2rem 0;
+      position: relative;
+    }
+
+    .roadmap-marker {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--night-2);
+      border: 2px solid var(--volt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--volt);
+    }
+
+    .roadmap-item.done .roadmap-marker {
+      background: var(--volt);
+      color: var(--night);
+    }
+
+    .roadmap-item.next .roadmap-marker {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .roadmap-content {
+      padding-top: 0.5rem;
+    }
+
+    .roadmap-phase {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--slate);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .roadmap-item.done .roadmap-phase {
+      color: var(--volt-dark);
+    }
+
+    .roadmap-item.next .roadmap-phase {
+      color: var(--amber);
+    }
+
+    .roadmap-content h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .roadmap-content p {
+      color: var(--slate);
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    /* --- REVENUE --- */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .revenue-card {
+      background: var(--night-2);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      padding: 1.75rem;
+      position: relative;
+    }
+
+    .revenue-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--volt);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .revenue-label {
+      font-size: 0.8rem;
+      color: var(--slate);
+      margin-bottom: 1rem;
+    }
+
+    .revenue-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .revenue-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--volt);
+    }
+
+    .revenue-card p {
+      color: var(--slate);
+      font-size: 0.8rem;
+      line-height: 1.5;
+      margin-top: 1rem;
+    }
+
+    /* --- CTA --- */
+    .cta-section {
+      background: var(--night-2);
+      border-top: 1px solid rgba(0, 217, 126, 0.12);
+      text-align: center;
+      padding: 6rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 600px 400px at 50% 100%, rgba(0, 217, 126, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-numbers {
+      display: flex;
+      gap: 4rem;
+      justify-content: center;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .cta-stat {
+      text-align: center;
+    }
+
+    .cta-stat .n {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--volt);
+    }
+
+    .cta-stat .l {
+      font-size: 0.8rem;
+      color: var(--slate);
+      margin-top: 0.25rem;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--night);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--volt);
+    }
+
+    footer p {
+      color: var(--slate);
+      font-size: 0.8rem;
+    }
+
+    /* SCROLL ANIMATIONS */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav {
+        padding: 1rem 1.5rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      section {
+        padding: 4rem 1.5rem;
+      }
+
+      .hero {
+        padding: 7rem 1.5rem 3rem;
+      }
+
+      .hero-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .exec-grid,
+      .problem-grid,
+      .services-grid,
+      .revenue-grid,
+      .advantages-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .solution-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .phone-wrap {
+        display: none;
+      }
+
+      h1 {
+        font-size: 2.4rem;
+      }
+
+      .cta-numbers {
+        gap: 2rem;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">⚡ VoltRide</div>
+    <ul class="nav-links">
+      <li><a href="#masalah">Masalah</a></li>
+      <li><a href="#solusi">Solusi</a></li>
+      <li><a href="#layanan">Layanan</a></li>
+      <li><a href="#keunggulan">Keunggulan</a></li>
+      <li><a href="#roadmap">Roadmap</a></li>
+    </ul>
+    <a href="https://wa.me/6281999197186" class="nav-cta">💬 Diskusi Sekarang</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="beranda">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+
+    <div class="badge">Proposal Kemitraan Bisnis · 2026</div>
+
+    <h1>Ride-Hailing Listrik<br><em>Asli Indonesia</em></h1>
+
+    <p class="hero-sub">
+      Sementara Green SM masih menemukan celah respons krisis dan kepercayaan publik, <strong>VoltRide</strong> hadir
+      sebagai alternatif yang benar-benar memahami penumpang Indonesia — lebih cepat, lebih empatik, lebih lokal.
+    </p>
+
+    <div class="hero-actions">
+      <a href="https://wa.me/6281999197186?text=Halo%2C%20saya%20tertarik%20mendiskusikan%20kemitraan%20VoltRide."
+        class="btn-primary">💬 Minta Presentasi Pilot</a>
+      <a href="#masalah" class="btn-ghost">Lihat Proposal ↓</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">47M+</div>
+        <div class="stat-label">Pengguna ride-hailing aktif<br>di Indonesia 2025</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Rp 28T</div>
+        <div class="stat-label">Proyeksi pasar EV mobility<br>Indonesia 2027</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">68%</div>
+        <div class="stat-label">Pengguna siap beralih dari<br>kompetitor pasca insiden</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3×</div>
+        <div class="stat-label">Pertumbuhan EV Indonesia<br>YoY 2024–2025</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- EXEC SUMMARY -->
+  <section id="ringkasan">
+    <div class="section-num">01 — Ringkasan Eksekutif</div>
+    <h2>Momen yang <em>Tidak Boleh Dilewatkan</em></h2>
+    <p class="section-intro">
+      Pasar ride-hailing listrik Indonesia tengah mengalami titik balik. Kepercayaan publik terhadap Green SM
+      terguncang pasca insiden April 2026. Ini adalah momentum langka untuk membangun merek lokal yang kuat.
+    </p>
+
+    <div class="exec-grid fade-in">
+      <div class="exec-card highlight-card">
+        <h3>📍 Konteks Pasar</h3>
+        <p>Green SM baru masuk Indonesia Desember 2024, masih bergulat dengan krisis kepercayaan pasca-insiden
+          kereta Bekasi. Netizen Indonesia memboikot, komentar ditutup, akun X diprivatkan.
+          Ruang kosong yang signifikan terbuka untuk pemain baru.</p>
+      </div>
+      <div class="exec-card">
+        <h3>🎯 Peluang VoltRide</h3>
+        <p>VoltRide menawarkan layanan ride-hailing kendaraan listrik yang 100% berakar di Indonesia —
+          operator lokal, armada lokal, empati lokal. Dengan momen ini, kami siap menjadi merek
+          EV mobility nomor satu yang dicintai masyarakat.</p>
+      </div>
+      <div class="exec-card">
+        <h3>🚘 Armada & Teknologi</h3>
+        <p>Menggunakan kendaraan listrik produksi lokal dan ASEAN yang telah tersertifikasi SNI,
+          dengan platform aplikasi berstandar internasional, sistem pembayaran multimoda, dan
+          dashboard keamanan real-time untuk pengemudi dan penumpang.</p>
+      </div>
+      <div class="exec-card">
+        <h3>🤝 Model Kemitraan</h3>
+        <p>VoltRide terbuka untuk skema kemitraan strategis: co-branding, joint venture operator,
+          B2B corporate fleet, hingga white-label platform untuk mitra daerah.
+          Fleksibel, terstruktur, dan menguntungkan semua pihak.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- MASALAH PASAR -->
+  <section id="masalah">
+    <div class="section-num">02 — Masalah Pasar</div>
+    <h2>Di Mana <em>Kompetitor Gagal</em></h2>
+    <p class="section-intro">
+      Setiap celah yang ditinggalkan Green SM adalah peluang yang bisa direbut oleh pemain yang
+      benar-benar memahami kebutuhan penumpang Indonesia.
+    </p>
+
+    <div class="problem-grid fade-in">
+      <div class="problem-card">
+        <div class="problem-icon">😶</div>
+        <h3>Respons Krisis Tanpa Empati</h3>
+        <p>Pasca insiden fatal di Bekasi, Green SM tidak menyertakan permintaan maaf dalam pernyataan resminya.
+          Penumpang Indonesia tidak mau dilayani oleh merek yang tidak peduli keselamatan mereka.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🌍</div>
+        <h3>Merek Asing, Manajemen Asing</h3>
+        <p>Dikendalikan dari Vietnam oleh investor luar, Green SM belum benar-benar memahami nuansa budaya
+          lokal Indonesia — dari komunikasi publik hingga standar pelayanan.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🚦</div>
+        <h3>Masalah Keselamatan Operasional</h3>
+        <p>Kementerian Perhubungan memanggil Green SM dan mengancam mencabut izin operasional.
+          Penumpang kehilangan kepercayaan terhadap standar keselamatan armada dan pengemudi.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📵</div>
+        <h3>Menutup Diri dari Kritik Publik</h3>
+        <p>Menutup kolom komentar Instagram dan memprivatkan akun X justru memperburuk citra.
+          Netizen Indonesia merespons dengan gerakan boikot yang masif dan viral.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🏙️</div>
+        <h3>Cakupan Wilayah Terbatas</h3>
+        <p>Green SM masih terkonsentrasi di kota-kota besar. Ratusan kota tier-2 dan tier-3 di
+          seluruh Indonesia belum terjangkau layanan EV mobility yang berkualitas.</p>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">💳</div>
+        <h3>Ekosistem Pembayaran Kurang Lokal</h3>
+        <p>Belum terintegrasi penuh dengan dompet digital lokal populer seperti GoPay, OVO, Dana,
+          LinkAja — metode pembayaran yang digunakan mayoritas penumpang Indonesia.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- SOLUSI -->
+  <section id="solusi">
+    <div class="section-num">03 — Solusi yang Diusulkan</div>
+    <h2>Memperkenalkan <em>VoltRide</em></h2>
+    <p class="section-intro">
+      Platform ride-hailing listrik yang dibangun dengan filosofi "Indonesia First" —
+      keselamatan, empati, dan kepercayaan sebagai pondasi utama.
+    </p>
+
+    <div class="solution-layout">
+      <div class="solution-list fade-in">
+        <div class="solution-item">
+          <div class="solution-dot">01</div>
+          <div class="solution-text">
+            <h3>Keselamatan Berstandar Tinggi</h3>
+            <p>Setiap pengemudi melewati seleksi ketat, pelatihan defensif driving, dan evaluasi berkala.
+              Armada diperiksa setiap 30 hari dengan standar Kemenhub RI dan tersertifikasi SNI.</p>
+          </div>
+        </div>
+        <div class="solution-item">
+          <div class="solution-dot">02</div>
+          <div class="solution-text">
+            <h3>Respons Krisis Berprotokol</h3>
+            <p>SOP komunikasi krisis berbasis empati — dalam 1 jam insiden, tim communications langsung
+              aktif dengan pernyataan resmi yang mencantumkan belasungkawa dan langkah konkret.</p>
+          </div>
+        </div>
+        <div class="solution-item">
+          <div class="solution-dot">03</div>
+          <div class="solution-text">
+            <h3>Ekosistem Pembayaran Lokal Lengkap</h3>
+            <p>Integrasi dengan GoPay, OVO, Dana, LinkAja, QRIS, dan semua kartu bank Indonesia.
+              Penumpang tidak perlu dompet baru untuk menikmati layanan VoltRide.</p>
+          </div>
+        </div>
+        <div class="solution-item">
+          <div class="solution-dot">04</div>
+          <div class="solution-text">
+            <h3>Ekspansi Kota Tier-2 & Tier-3</h3>
+            <p>Roadmap ekspansi ke 50 kota dalam 18 bulan pertama — menjangkau Medan, Makassar,
+              Semarang, Bandung, Palembang, hingga kota-kota kabupaten yang belum terlayani.</p>
+          </div>
+        </div>
+        <div class="solution-item">
+          <div class="solution-dot">05</div>
+          <div class="solution-text">
+            <h3>Manajemen & Tim Lokal</h3>
+            <p>Dikelola sepenuhnya oleh tim Indonesia — CEO, COO, hingga tim operasional lapangan.
+              Keputusan cepat, relevan budaya, dan akuntabel kepada masyarakat Indonesia.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="phone-status">
+              <span>9:41</span>
+              <span>⚡ 87%</span>
+            </div>
+            <div class="phone-app-header">
+              <div class="app-logo">⚡ VoltRide</div>
+              <div class="app-sub">Listrik. Lokal. Terpercaya.</div>
+            </div>
+            <div class="phone-map-area">
+              <div class="map-dot" style="top:30px;left:50px;"></div>
+              <div class="map-dot"
+                style="top:70px;left:150px;background:#4D9EFF;box-shadow:0 0 0 3px rgba(77,158,255,0.25);"></div>
+              <div class="map-line" style="top:35px;left:55px;width:100px;transform:rotate(15deg);"></div>
+              <div style="position:absolute;top:8px;left:0;right:0;padding:0 12px;">
+                <div
+                  style="background:rgba(0,0,0,0.4);border-radius:8px;padding:8px 10px;font-size:0.6rem;color:#8B9EB8;">
+                  📍 Depok, Jawa Barat</div>
+              </div>
+            </div>
+            <div class="phone-ride-cards">
+              <div style="font-size:0.65rem;color:#8B9EB8;margin-bottom:2px;">Pilih Layanan</div>
+              <div class="ride-card active">
+                <div>
+                  <div class="ride-name">⚡ VoltEco</div>
+                  <div class="ride-sub">Hemat · EV Standar</div>
+                </div>
+                <div class="ride-price">Rp 12k</div>
+              </div>
+              <div class="ride-card">
+                <div>
+                  <div class="ride-name">✨ VoltPrime</div>
+                  <div class="ride-sub">Premium · SUV Listrik</div>
+                </div>
+                <div class="ride-price">Rp 22k</div>
+              </div>
+              <div class="ride-card">
+                <div>
+                  <div class="ride-name">👥 VoltShare</div>
+                  <div class="ride-sub">Berbagi · Lebih Irit</div>
+                </div>
+                <div class="ride-price">Rp 8k</div>
+              </div>
+            </div>
+            <div class="phone-book-btn">Pesan VoltEco →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- LAYANAN -->
+  <section id="layanan">
+    <div class="section-num">04 — Ekosistem Layanan</div>
+    <h2>Tiga Pilar Layanan <em>VoltRide</em></h2>
+    <p class="section-intro">
+      Lebih dari sekadar taksi listrik. VoltRide membangun ekosistem mobilitas yang komprehensif
+      untuk penumpang, mitra pengemudi, dan klien korporat.
+    </p>
+
+    <div class="services-grid fade-in">
+      <div class="service-card">
+        <div class="service-icon icon-green">⚡</div>
+        <h3>VoltRide Penumpang</h3>
+        <p>Layanan jemput-antar dengan kendaraan listrik berstandar tinggi. Tiga tier: VoltEco (standar),
+          VoltPrime (premium SUV), dan VoltShare (berbagi tumpangan) untuk semua kebutuhan perjalanan.</p>
+        <span class="service-tag tag-green">Tersedia Sekarang</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon icon-blue">🏢</div>
+        <h3>VoltBiz Corporate</h3>
+        <p>Solusi transportasi korporat untuk perusahaan — armada EV dedicated, dashboard manajemen
+          perjalanan, tagihan terpusat, dan laporan karbon untuk pelaporan ESG perusahaan Anda.</p>
+        <span class="service-tag tag-blue">Pilot Q3 2026</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon icon-amber">📦</div>
+        <h3>VoltKurir Express</h3>
+        <p>Pengiriman same-day menggunakan armada EV — zero emisi, tepat waktu, dan terintegrasi
+          dengan platform e-commerce lokal. Menjangkau lebih banyak titik dengan efisiensi lebih tinggi.</p>
+        <span class="service-tag tag-amber">Segera Hadir</span>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- KEUNGGULAN -->
+  <section id="keunggulan">
+    <div class="section-num">05 — Keunggulan Kompetitif</div>
+    <h2>Mengapa VoltRide <em>Menang</em></h2>
+
+    <div class="advantages-grid fade-in">
+      <div class="adv-card">
+        <div class="adv-num">01</div>
+        <div>
+          <h3>Dioperasikan Orang Indonesia</h3>
+          <p>Manajemen penuh oleh tim lokal yang mengerti budaya, regulasi, dan kebutuhan nyata
+            penumpang Indonesia — bukan dikendalikan dari luar negeri.</p>
+        </div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-num">02</div>
+        <div>
+          <h3>Standar Keselamatan Tertinggi</h3>
+          <p>Setiap armada bersertifikat SNI, pengemudi terlatih resmi, dan SOP keselamatan
+            mengikuti standar Kemenhub RI yang diperbarui berkala.</p>
+        </div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-num">03</div>
+        <div>
+          <h3>Ekosistem Pembayaran Lokal</h3>
+          <p>GoPay, OVO, Dana, LinkAja, QRIS, semua bank Indonesia — tidak ada hambatan
+            pembayaran untuk penumpang lokal maupun turis asing.</p>
+        </div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-num">04</div>
+        <div>
+          <h3>Harga Transparan & Kompetitif</h3>
+          <p>Tidak ada surge pricing tersembunyi. Tarif ditampilkan penuh sebelum pemesanan,
+            dengan garansi harga terkunci saat perjalanan dimulai.</p>
+        </div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-num">05</div>
+        <div>
+          <h3>Komunikasi Publik Terbuka</h3>
+          <p>Kolom komentar selalu terbuka. Setiap kritik direspons dalam 24 jam kerja.
+            Transparansi adalah nilai inti VoltRide, bukan pilihan.</p>
+        </div>
+      </div>
+      <div class="adv-card">
+        <div class="adv-num">06</div>
+        <div>
+          <h3>Program Loyalitas Volt Points</h3>
+          <p>Setiap perjalanan menghasilkan Volt Points yang bisa ditukar diskon, merchandise,
+            atau donasi ke program penghijauan Indonesia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- PERBANDINGAN -->
+  <section id="perbandingan">
+    <div class="section-num">06 — Perbandingan Kompetitor</div>
+    <h2>VoltRide vs <em>Green SM</em></h2>
+    <p class="section-intro">Perbandingan langsung berdasarkan faktor yang paling penting bagi penumpang Indonesia.</p>
+
+    <div class="fade-in">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Faktor Penilaian</th>
+            <th class="volt-col">⚡ VoltRide</th>
+            <th class="competitor-col">🟢 Green SM</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Manajemen & Tim Lokal</td>
+            <td><span class="check">✓</span> 100% Indonesia</td>
+            <td><span class="cross">✗</span> Vietnam-based</td>
+          </tr>
+          <tr>
+            <td>Respons Krisis Berempati</td>
+            <td><span class="check">✓</span> SOP 1 jam</td>
+            <td><span class="cross">✗</span> Tanpa permintaan maaf</td>
+          </tr>
+          <tr>
+            <td>Sertifikasi SNI Armada</td>
+            <td><span class="check">✓</span> Wajib semua unit</td>
+            <td><span class="partial">~</span> Dalam evaluasi Kemenhub</td>
+          </tr>
+          <tr>
+            <td>Integrasi Dompet Lokal</td>
+            <td><span class="check">✓</span> GoPay, OVO, Dana, dll</td>
+            <td><span class="partial">~</span> Terbatas</td>
+          </tr>
+          <tr>
+            <td>Komunikasi Publik Terbuka</td>
+            <td><span class="check">✓</span> Selalu terbuka</td>
+            <td><span class="cross">✗</span> Komentar & akun ditutup</td>
+          </tr>
+          <tr>
+            <td>Cakupan Kota Tier-2/3</td>
+            <td><span class="check">✓</span> Roadmap 50 kota</td>
+            <td><span class="cross">✗</span> Terbatas kota besar</td>
+          </tr>
+          <tr>
+            <td>Program Loyalitas</td>
+            <td><span class="check">✓</span> Volt Points + Donasi</td>
+            <td><span class="partial">~</span> Belum di Indonesia</td>
+          </tr>
+          <tr>
+            <td>Status Regulasi</td>
+            <td><span class="check">✓</span> Penuh compliance</td>
+            <td><span class="cross">✗</span> Terancam pencabutan izin</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- REVENUE STREAMS -->
+  <section id="revenue">
+    <div class="section-num">07 — Peluang Bisnis</div>
+    <h2>Model Pendapatan <em>Multi-Lapis</em></h2>
+
+    <div class="revenue-grid fade-in">
+      <div class="revenue-card">
+        <div class="revenue-num">65%</div>
+        <div class="revenue-label">Komisi Perjalanan</div>
+        <div class="revenue-bar">
+          <div class="revenue-fill" style="width:65%"></div>
+        </div>
+        <p>Komisi dari setiap perjalanan penumpang — model gross revenue share yang menguntungkan
+          pengemudi mitra dan platform secara bersamaan.</p>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-num">20%</div>
+        <div class="revenue-label">Layanan Korporat B2B</div>
+        <div class="revenue-bar">
+          <div class="revenue-fill" style="width:20%"></div>
+        </div>
+        <p>Kontrak tahunan dengan perusahaan untuk armada dedicated, dashboard perjalanan,
+          dan pelaporan emisi karbon untuk kebutuhan ESG.</p>
+      </div>
+      <div class="revenue-card">
+        <div class="revenue-num">15%</div>
+        <div class="revenue-label">Iklan & Ekosistem Mitra</div>
+        <div class="revenue-bar">
+          <div class="revenue-fill" style="width:15%"></div>
+        </div>
+        <p>Penempatan iklan in-app, kemitraan promo dengan merchant, integrasi tur wisata,
+          dan program referral untuk ekosistem yang saling menguntungkan.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="section-num">08 — Peta Jalan Implementasi</div>
+    <h2>Dari Pilot ke <em>Pasar Nasional</em></h2>
+    <p class="section-intro">Lima fase terstruktur untuk membangun layanan EV ride-hailing yang dipercaya se-Indonesia.
+    </p>
+
+    <div class="roadmap fade-in">
+      <div class="roadmap-item done">
+        <div class="roadmap-marker">✓</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 01 · Selesai · Q1 2026</div>
+          <h3>Riset Pasar & Pembentukan Tim</h3>
+          <p>Analisis kompetitor, riset kebutuhan penumpang Indonesia, rekrutmen tim inti lokal,
+            legal entity establishment, dan registrasi merek VoltRide di Indonesia.</p>
+        </div>
+      </div>
+      <div class="roadmap-item next">
+        <div class="roadmap-marker">→</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 02 · Sekarang · Q2 2026</div>
+          <h3>Pengembangan Platform & Pilot Jabodetabek</h3>
+          <p>Finalisasi aplikasi iOS & Android, integrasi semua dompet digital lokal, rekrutmen
+            500 pengemudi mitra pertama, dan soft launch pilot di Jakarta, Bogor, Depok, Tangerang, Bekasi.</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-marker">03</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 03 · Q3 2026</div>
+          <h3>Ekspansi Kota Tier-1 & Optimisasi</h3>
+          <p>Rollout ke Bandung, Surabaya, Medan, Semarang, Makassar. Analisis data pilot,
+            optimisasi UX, penyempurnaan pricing, dan peluncuran VoltBiz Corporate.</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-marker">04</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 04 · Q4 2026</div>
+          <h3>Ekspansi Kota Tier-2 & VoltKurir</h3>
+          <p>Masuk ke 30 kota tier-2 dan tier-3. Peluncuran VoltKurir Express, program loyalitas
+            Volt Points penuh, dan integrasi dengan platform e-commerce besar Indonesia.</p>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-marker">05</div>
+        <div class="roadmap-content">
+          <div class="roadmap-phase">Fase 05 · 2027+</div>
+          <h3>Dominasi Pasar Nasional & Ekspansi ASEAN</h3>
+          <p>Kehadiran di 50+ kota Indonesia. 10.000+ pengemudi mitra aktif. Eksplorasi ekspansi
+            ke Malaysia, Filipina, dan Thailand sebagai EV mobility brand dari Indonesia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CTA -->
+  <section class="cta-section" id="kemitraan">
+    <div class="section-num" style="text-align:center;">09 — Mulai Kemitraan</div>
+    <h2 style="text-align:center;">Waktunya <em>Bergerak</em></h2>
+    <p
+      style="color:var(--slate-light);max-width:520px;margin:1rem auto 0;text-align:center;font-weight:300;line-height:1.7;">
+      Momentum ada di sini. Kepercayaan publik tersedia untuk direbut. VoltRide siap menjadi
+      mitra pertumbuhan jangka panjang Anda dalam ekosistem EV mobility Indonesia.
+    </p>
+
+    <div class="cta-numbers">
+      <div class="cta-stat">
+        <div class="n">500</div>
+        <div class="l">Target pengemudi pilot awal</div>
+      </div>
+      <div class="cta-stat">
+        <div class="n">5 Kota</div>
+        <div class="l">Pilot Jabodetabek & sekitar</div>
+      </div>
+      <div class="cta-stat">
+        <div class="n">6 Bln</div>
+        <div class="l">Dari kontrak ke launch live</div>
+      </div>
+      <div class="cta-stat">
+        <div class="n">24 Bln</div>
+        <div class="l">Estimasi payback ROI</div>
+      </div>
+    </div>
+
+    <div class="cta-actions">
+      <a href="https://wa.me/6281999197186?text=Halo%2C%20saya%20tertarik%20mendiskusikan%20kemitraan%20VoltRide%20Indonesia."
+        class="btn-primary">💬 Jadwalkan Diskusi</a>
+      <a href="mailto:randy@elemesgroup.com" class="btn-ghost">📧 randy@elemesgroup.com</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="logo">⚡ VoltRide Indonesia</div>
+    <p>PT VoltRide Green Mobility Indonesia · Jakarta · 2026 · Proposal Bisnis Rahasia</p>
+    <p style="color:rgba(139,158,184,0.5);font-size:0.75rem;">Dokumen ini bersifat rahasia dan hanya untuk penerima yang
+      dituju.</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
