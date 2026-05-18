@@ -53,7 +53,9 @@
       overflow: hidden;
       background: var(--bg);
       font-family: 'Plus Jakarta Sans', sans-serif;
-      color: var(--text)
+      color: var(--text);
+      display: flex;
+      flex-direction: column
     }
 
     ::-webkit-scrollbar {
@@ -80,6 +82,7 @@
       background: var(--navy);
       z-index: 100;
       flex-shrink: 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08)
     }
 
     .logo {
@@ -205,7 +208,8 @@
     .body-wrap {
       display: flex;
       flex: 1;
-      overflow: visible
+      overflow: hidden;
+      min-height: 0
     }
 
     /* SIDEBAR */
