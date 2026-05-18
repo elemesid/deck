@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elemes BigData Monitor — Kota Balikpapan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --navy: #08111E;
+      --navy2: #0D1F35;
+      --navy3: #112540;
+      --navy4: #162D55;
+      --cyan: #00D4FF;
+      --cyan2: #00A8CC;
+      --cyan3: rgba(0, 212, 255, 0.12);
+      --green: #00E599;
+      --green2: #00B876;
+      --amber: #FFB020;
+      --red: #FF4D6D;
+      --purple: #A78BFA;
+      --text: #E2F0FF;
+      --text2: #7A9DBF;
+      --text3: #3A5A7A;
+      --border: rgba(0, 212, 255, 0.1);
+      --border2: rgba(0, 212, 255, 0.22);
+      --panel: rgba(13, 31, 53, 0.95);
+      --sidebar-w: 220px;
+      --topbar-h: 56px;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--navy)
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      display: flex;
+      flex-direction: column
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--navy2)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--cyan3);
+      border-radius: 2px
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: var(--topbar-h);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: var(--navy2);
+      border-bottom: 1px solid var(--border2);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none
+    }
+
+    .logo-mark {
+      width: 34px;
+      height: 34px;
+      background: var(--cyan);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: #08111E;
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round
+    }
+
+    .logo-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.3px
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--text2);
+      letter-spacing: 0.8px;
+      margin-top: 1px
+    }
+
+    .topbar-mid {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .nav-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      background: transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-pill:hover {
+      border-color: var(--border2);
+      color: var(--text)
+    }
+
+    .nav-pill.active {
+      background: var(--cyan3);
+      border-color: var(--border2);
+      color: var(--cyan)
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      font-family: 'Space Mono', monospace;
+      padding: 5px 10px;
+      background: rgba(0, 229, 153, 0.08);
+      border: 1px solid rgba(0, 229, 153, 0.25);
+      border-radius: 20px
+    }
+
+    .pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: 0.4;
+        transform: scale(0.7)
+      }
+    }
+
+    .clk {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--text2)
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      border-color: var(--border2);
+      color: var(--text);
+      background: var(--navy3)
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--cyan4, rgba(0, 212, 255, 0.2));
+      border: 1.5px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      cursor: pointer
+    }
+
+    /* ── BODY LAYOUT ── */
+    .body-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--navy2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 16px 12px 8px;
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text3);
+      font-family: 'Space Mono', monospace
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text2);
+      border-radius: 0;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+
+    .sidebar-item:hover {
+      color: var(--text);
+      background: rgba(0, 212, 255, 0.05)
+    }
+
+    .sidebar-item.active {
+      color: var(--cyan);
+      background: rgba(0, 212, 255, 0.07);
+      border-left-color: var(--cyan)
+    }
+
+    .sidebar-item i {
+      font-size: 17px;
+      flex-shrink: 0
+    }
+
+    .sidebar-badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-family: 'Space Mono', monospace
+    }
+
+    .sb-green {
+      background: rgba(0, 229, 153, 0.12);
+      color: var(--green)
+    }
+
+    .sb-amber {
+      background: rgba(255, 176, 32, 0.12);
+      color: var(--amber)
+    }
+
+    .sb-red {
+      background: rgba(255, 77, 109, 0.12);
+      color: var(--red)
+    }
+
+    .sb-cyan {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--cyan)
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 14px 12px;
+      border-top: 1px solid var(--border)
+    }
+
+    .opd-status-mini {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+      font-size: 11px;
+      color: var(--text2)
+    }
+
+    .opd-dot-mini {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    /* ── PAGE (tabs) ── */
+    .page {
+      display: none
+    }
+
+    .page.active {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
+
+    /* ── KPI STRIP ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px
+    }
+
+    .kpi {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      border-radius: 12px 12px 0 0
+    }
+
+    .kpi.cyan::after {
+      background: var(--cyan)
+    }
+
+    .kpi.green::after {
+      background: var(--green)
+    }
+
+    .kpi.amber::after {
+      background: var(--amber)
+    }
+
+    .kpi.red::after {
+      background: var(--red)
+    }
+
+    .kpi:hover {
+      border-color: var(--border2)
+    }
+
+    .kpi-label {
+      font-size: 10px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 10px
+    }
+
+    .kpi-val {
+      font-size: 30px;
+      font-weight: 600;
+      font-family: 'Space Mono', monospace;
+      line-height: 1;
+      margin-bottom: 5px
+    }
+
+    .kpi-val.cyan {
+      color: var(--cyan)
+    }
+
+    .kpi-val.green {
+      color: var(--green)
+    }
+
+    .kpi-val.amber {
+      color: var(--amber)
+    }
+
+    .kpi-val.red {
+      color: var(--red)
+    }
+
+    .kpi-trend {
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px
+    }
+
+    .trend-up {
+      color: var(--green)
+    }
+
+    .trend-dn {
+      color: var(--red)
+    }
+
+    .trend-ok {
+      color: var(--text2)
+    }
+
+    /* ── GRID LAYOUTS ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 14px
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px
+    }
+
+    .grid-2b {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px
+    }
+
+    .panel-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--text2)
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-family: 'Space Mono', monospace;
+      border: 1px solid
+    }
+
+    .tag-cyan {
+      background: rgba(0, 212, 255, 0.08);
+      color: var(--cyan);
+      border-color: rgba(0, 212, 255, 0.2)
+    }
+
+    .tag-green {
+      background: rgba(0, 229, 153, 0.08);
+      color: var(--green);
+      border-color: rgba(0, 229, 153, 0.2)
+    }
+
+    .tag-amber {
+      background: rgba(255, 176, 32, 0.08);
+      color: var(--amber);
+      border-color: rgba(255, 176, 32, 0.2)
+    }
+
+    .tag-red {
+      background: rgba(255, 77, 109, 0.08);
+      color: var(--red);
+      border-color: rgba(255, 77, 109, 0.2)
+    }
+
+    /* ── CHART ── */
+    .chart-wrap {
+      position: relative
+    }
+
+    .chart-wrap canvas {
+      display: block
+    }
+
+    /* ── OPD LIST ── */
+    .opd-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px
+    }
+
+    .opd-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      background: rgba(22, 45, 85, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .opd-item:hover {
+      border-color: var(--border2);
+      background: rgba(22, 45, 85, 0.9)
+    }
+
+    .opd-item.selected {
+      border-color: var(--cyan);
+      background: rgba(0, 212, 255, 0.06)
+    }
+
+    .opd-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .opd-name {
+      font-size: 12px;
+      font-weight: 500;
+      flex: 1;
+      color: var(--text)
+    }
+
+    .opd-records {
+      font-size: 11px;
+      font-family: 'Space Mono', monospace;
+      color: var(--cyan);
+      margin-right: 4px
+    }
+
+    .opd-bar-track {
+      width: 56px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .opd-bar-fill {
+      height: 100%;
+      border-radius: 2px
+    }
+
+    .opd-pct {
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      width: 26px;
+      text-align: right
+    }
+
+    /* ── ALERTS ── */
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .alert {
+      display: flex;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 9px;
+      border: 1px solid;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .alert:hover {
+      filter: brightness(1.1)
+    }
+
+    .alert.warn {
+      background: rgba(255, 176, 32, 0.05);
+      border-color: rgba(255, 176, 32, 0.2)
+    }
+
+    .alert.err {
+      background: rgba(255, 77, 109, 0.05);
+      border-color: rgba(255, 77, 109, 0.2)
+    }
+
+    .alert.ok {
+      background: rgba(0, 229, 153, 0.05);
+      border-color: rgba(0, 229, 153, 0.15)
+    }
+
+    .alert.info {
+      background: rgba(0, 212, 255, 0.05);
+      border-color: rgba(0, 212, 255, 0.2)
+    }
+
+    .alert-ico {
+      font-size: 17px;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .alert-ico.warn {
+      color: var(--amber)
+    }
+
+    .alert-ico.err {
+      color: var(--red)
+    }
+
+    .alert-ico.ok {
+      color: var(--green)
+    }
+
+    .alert-ico.info {
+      color: var(--cyan)
+    }
+
+    .alert-body {
+      flex: 1
+    }
+
+    .alert-title {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 2px
+    }
+
+    .alert-meta {
+      font-size: 10px;
+      color: var(--text2);
+      font-family: 'Space Mono', monospace
+    }
+
+    /* ── PIPELINE BARS ── */
+    .pipe-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px
+    }
+
+    .pipe-item {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .pipe-name {
+      font-size: 11px;
+      color: var(--text2);
+      width: 76px;
+      flex-shrink: 0
+    }
+
+    .pipe-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .pipe-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1.4s cubic-bezier(0.34, 1.56, 0.64, 1)
+    }
+
+    .pipe-pct {
+      font-size: 10px;
+      font-family: 'Space Mono', monospace;
+      width: 30px;
+      text-align: right
+    }
+
+    /* ── LOG ── */
+    .log-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px
+    }
+
+    .log-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.04);
+      opacity: 0;
+      animation: fi 0.3s forwards
+    }
+
+    @keyframes fi {
+      to {
+        opacity: 1
+      }
+    }
+
+    .log-t {
+      color: var(--text3);
+      flex-shrink: 0;
+      padding-top: 1px
+    }
+
+    .log-src {
+      flex-shrink: 0;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700
+    }
+
+    .log-src.etl {
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--cyan)
+    }
+
+    .log-src.api {
+      background: rgba(0, 229, 153, 0.1);
+      color: var(--green)
+    }
+
+    .log-src.db {
+      background: rgba(255, 176, 32, 0.1);
+      color: var(--amber)
+    }
+
+    .log-src.sec {
+      background: rgba(255, 77, 109, 0.1);
+      color: var(--red)
+    }
+
+    .log-src.sys {
+      background: rgba(167, 139, 250, 0.1);
+      color: var(--purple)
+    }
+
+    .log-msg {
+      color: var(--text2);
+      line-height: 1.4
+    }
+
+    /* ── OPD DETAIL PANEL ── */
+    .opd-detail {
+      background: var(--navy3);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 14px;
+      display: none
+    }
+
+    .opd-detail.show {
+      display: block
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px
+    }
+
+    .detail-title {
+      font-size: 16px;
+      font-weight: 600
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .detail-kpi {
+      background: var(--navy2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 12px
+    }
+
+    .detail-kpi-label {
+      font-size: 10px;
+      color: var(--text2);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px
+    }
+
+    .detail-kpi-val {
+      font-size: 20px;
+      font-weight: 600;
+      font-family: 'Space Mono', monospace
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 4px 10px;
+      font-size: 12px;
+      transition: all 0.2s
+    }
+
+    .close-btn:hover {
+      border-color: var(--border2);
+      color: var(--text)
+    }
+
+    /* ── DONUT MINI ── */
+    .donut-row {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 0 10px
+    }
+
+    .donut-item {
+      text-align: center
+    }
+
+    .donut-label {
+      font-size: 10px;
+      color: var(--text2);
+      margin-top: 6px
+    }
+
+    .donut-val {
+      font-size: 12px;
+      font-family: 'Space Mono', monospace
+    }
+
+    /* ── TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px
+    }
+
+    .data-table th {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text2);
+      font-weight: 500;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left
+    }
+
+    .data-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+      color: var(--text)
+    }
+
+    .data-table tr:hover td {
+      background: rgba(0, 212, 255, 0.03)
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: none
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-family: 'Space Mono', monospace
+    }
+
+    /* ── RESOURCE BAR ── */
+    .res-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px
+    }
+
+    .res-item {
+      background: var(--navy3);
+      border-radius: 8px;
+      padding: 12px
+    }
+
+    .res-label {
+      font-size: 10px;
+      color: var(--text2);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .res-pct {
+      font-family: 'Space Mono', monospace;
+      color: var(--text)
+    }
+
+    .res-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .res-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)
+    }
+
+    /* ── MINI STAT ── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px
+    }
+
+    .stat-card {
+      background: var(--navy3);
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 1px solid var(--border)
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: var(--text2);
+      margin-bottom: 4px
+    }
+
+    .stat-val {
+      font-size: 15px;
+      font-weight: 600;
+      font-family: 'Space Mono', monospace
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 17, 30, 0.8);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.show {
+      display: flex
+    }
+
+    .modal {
+      background: var(--navy2);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 24px;
+      width: 480px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px
+    }
+
+    .modal-sub {
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 18px
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1
+    }
+
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px
+    }
+
+    .modal-row:last-child {
+      border: none
+    }
+
+    .modal-key {
+      color: var(--text2)
+    }
+
+    .modal-val {
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px
+    }
+
+    /* ── SCROLL FIX ── */
+    .panel-scroll {
+      overflow-y: auto;
+      max-height: 320px
+    }
+
+    /* ── SETTINGS PAGE ── */
+    .settings-section {
+      margin-bottom: 20px
+    }
+
+    .settings-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: 10px
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .settings-label {
+      font-size: 13px;
+      color: var(--text)
+    }
+
+    .settings-sub {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px
+    }
+
+    .toggle {
+      width: 36px;
+      height: 20px;
+      background: var(--border);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      flex-shrink: 0
+    }
+
+    .toggle.on {
+      background: var(--cyan)
+    }
+
+    .toggle::after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: left 0.2s
+    }
+
+    .toggle.on::after {
+      left: 19px
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a class="logo" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 18 18">
+          <polyline points="2,14 6,8 10,11 14,4" />
+          <circle cx="14" cy="4" r="1.5" fill="#08111E" stroke="#08111E" />
+        </svg>
+      </div>
+      <div>
+        <div class="logo-name">Elemes BigData Monitor</div>
+        <div class="logo-sub" style="font-size:10px;color:var(--text2)">Kota Balikpapan · Phase 1 MVP</div>
+      </div>
+    </a>
+    <div class="topbar-mid">
+      <button class="nav-pill active" onclick="setPage('overview')"><i class="ti ti-layout-dashboard"></i>
+        Overview</button>
+      <button class="nav-pill" onclick="setPage('opd')"><i class="ti ti-building-community"></i> OPD</button>
+      <button class="nav-pill" onclick="setPage('pipeline')"><i class="ti ti-git-merge"></i> Pipeline</button>
+      <button class="nav-pill" onclick="setPage('alerts')"><i class="ti ti-bell"></i> Alerts <span id="alertCount"
+          style="background:var(--red);color:#fff;font-size:9px;padding:1px 5px;border-radius:8px;margin-left:2px">4</span></button>
+      <button class="nav-pill" onclick="setPage('settings')"><i class="ti ti-settings"></i> Pengaturan</button>
+    </div>
+    <div class="topbar-right">
+      <div class="live-badge"><span class="pulse"></span>LIVE</div>
+      <div class="clk" id="clk">--:--:--</div>
+      <button class="btn-icon" title="Refresh" onclick="simulateTick()"><i class="ti ti-refresh"></i></button>
+      <button class="btn-icon" title="Notifikasi"><i class="ti ti-bell"></i></button>
+      <div class="avatar" title="Admin">AG</div>
+    </div>
+  </div>
+
+  <div class="body-wrap">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">Navigasi</div>
+      <a class="sidebar-item active" onclick="setPage('overview');setSidebar(this)"><i
+          class="ti ti-layout-dashboard"></i>Overview</a>
+      <a class="sidebar-item" onclick="setPage('opd');setSidebar(this)"><i class="ti ti-building-community"></i>OPD
+        Monitor</a>
+      <a class="sidebar-item" onclick="setPage('pipeline');setSidebar(this)"><i
+          class="ti ti-git-merge"></i>Pipeline<span class="sidebar-badge sb-green">OK</span></a>
+      <a class="sidebar-item" onclick="setPage('alerts');setSidebar(this)"><i class="ti ti-bell"></i>Alerts<span
+          class="sidebar-badge sb-amber">4</span></a>
+      <a class="sidebar-item" onclick="setPage('quality');setSidebar(this)"><i class="ti ti-rosette"></i>Data
+        Quality</a>
+      <a class="sidebar-item" onclick="setPage('resources');setSidebar(this)"><i class="ti ti-server"></i>Resources</a>
+      <div class="sidebar-section" style="margin-top:8px">OPD Status</div>
+      <div id="sidebarOPD"></div>
+      <div class="sidebar-section" style="margin-top:8px">Akun</div>
+      <a class="sidebar-item" onclick="setPage('settings');setSidebar(this)"><i
+          class="ti ti-settings"></i>Pengaturan</a>
+      <div class="sidebar-footer">
+        <div style="font-size:10px;color:var(--text3);font-family:'Space Mono',monospace">v1.0.0 · Elemes Group</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">© 2025 PT Elemes Solusi Digital</div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- PAGE: OVERVIEW -->
+      <div class="page active" id="page-overview">
+        <div class="kpi-row">
+          <div class="kpi cyan" onclick="openModal('records')">
+            <div class="kpi-label">Total Records Ingested</div>
+            <div class="kpi-val cyan" id="kv1">2.847.391</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px">rows hari ini</div>
+            <div class="kpi-trend trend-up"><i class="ti ti-trending-up"></i> +12.4% vs kemarin</div>
+          </div>
+          <div class="kpi green" onclick="openModal('pipeline')">
+            <div class="kpi-label">Pipeline Aktif</div>
+            <div class="kpi-val green" id="kv2">10/10</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px">OPD tersambung</div>
+            <div class="kpi-trend trend-up"><i class="ti ti-check"></i> Semua nominal</div>
+          </div>
+          <div class="kpi amber" onclick="openModal('latency')">
+            <div class="kpi-label">Latency Rata-rata</div>
+            <div class="kpi-val amber" id="kv3">142ms</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px">end-to-end pipeline</div>
+            <div class="kpi-trend trend-up"><i class="ti ti-trending-down"></i> −8ms dari target</div>
+          </div>
+          <div class="kpi red" onclick="openModal('anomali')">
+            <div class="kpi-label">Anomali Terdeteksi</div>
+            <div class="kpi-val red" id="kv4">7</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px">24 jam terakhir</div>
+            <div class="kpi-trend trend-dn"><i class="ti ti-trending-up"></i> +2 sejak 08:00</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <div class="panel">
+              <div class="panel-head">
+                <span class="panel-title">Volume Ingesti Data (60 menit terakhir)</span>
+                <span class="tag tag-cyan">real-time · update/3s</span>
+              </div>
+              <div class="chart-wrap" style="height:200px">
+                <canvas id="volChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="panel">
+              <div class="panel-head">
+                <span class="panel-title">Distribusi per Kategori</span>
+                <span class="tag tag-cyan">hari ini</span>
+              </div>
+              <div class="chart-wrap" style="height:90px">
+                <canvas id="catBar"></canvas>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <span class="panel-title">Data Quality Score</span>
+                <span class="tag tag-green">93.2% avg</span>
+              </div>
+              <div class="donut-row">
+                <div class="donut-item"><canvas id="dq1" width="72" height="72"></canvas>
+                  <div class="donut-label">Completeness</div>
+                  <div class="donut-val" style="color:var(--cyan)">96.1%</div>
+                </div>
+                <div class="donut-item"><canvas id="dq2" width="72" height="72"></canvas>
+                  <div class="donut-label">Accuracy</div>
+                  <div class="donut-val" style="color:var(--green)">91.8%</div>
+                </div>
+                <div class="donut-item"><canvas id="dq3" width="72" height="72"></canvas>
+                  <div class="donut-label">Timeliness</div>
+                  <div class="donut-val" style="color:var(--amber)">91.7%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Status OPD</span><span class="tag tag-green">10/10
+                aktif</span></div>
+            <div class="opd-list" id="opdListMain"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Alert Aktif</span><span class="tag tag-amber">4
+                item</span></div>
+            <div class="alert-list" id="alertListMain"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Live Log</span><span class="tag tag-cyan">tail -f</span>
+            </div>
+            <div class="log-wrap panel-scroll" id="logMain" style="max-height:240px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: OPD -->
+      <div class="page" id="page-opd">
+        <div class="stat-row" style="grid-template-columns:repeat(3,1fr)">
+          <div class="stat-card">
+            <div class="stat-label">Total OPD Aktif</div>
+            <div class="stat-val" style="color:var(--green)">10/10</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Records Hari Ini</div>
+            <div class="stat-val" style="color:var(--cyan)">2.847.391</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Health Score</div>
+            <div class="stat-val" style="color:var(--amber)">88.5%</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Daftar OPD — klik untuk detail</span><input id="opdSearch"
+              placeholder="Cari OPD..."
+              style="background:var(--navy3);border:1px solid var(--border);border-radius:7px;padding:5px 10px;color:var(--text);font-size:12px;width:180px"
+              oninput="filterOPD(this.value)"></div>
+          <div class="opd-list" id="opdListFull" style="gap:8px"></div>
+        </div>
+        <div class="opd-detail" id="opdDetail">
+          <div class="detail-header">
+            <div>
+              <div class="detail-title" id="detailName">-</div>
+              <div style="font-size:12px;color:var(--text2)" id="detailSub">-</div>
+            </div>
+            <button class="close-btn" onclick="closeDetail()"><i class="ti ti-x"></i> Tutup</button>
+          </div>
+          <div class="detail-grid" id="detailKPIs"></div>
+          <div style="height:160px"><canvas id="detailChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- PAGE: PIPELINE -->
+      <div class="page" id="page-pipeline">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Services Aktif</div>
+            <div class="stat-val" style="color:var(--green)">8/9</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Throughput/min</div>
+            <div class="stat-val" style="color:var(--cyan)">3.247</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Error Rate</div>
+            <div class="stat-val" style="color:var(--amber)">0.3%</div>
+          </div>
+        </div>
+        <div class="grid-2b">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Pipeline Health</span></div>
+            <div class="pipe-row" id="pipeList"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Throughput Timeline</span><span class="tag tag-cyan">1
+                jam</span></div>
+            <div style="height:220px"><canvas id="throughputChart"></canvas></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Job History</span></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Job</th>
+                <th>Status</th>
+                <th>Mulai</th>
+                <th>Durasi</th>
+                <th>Records</th>
+                <th>Source</th>
+              </tr>
+            </thead>
+            <tbody id="jobTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE: ALERTS -->
+      <div class="page" id="page-alerts">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Critical</div>
+            <div class="stat-val" style="color:var(--red)">1</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Warning</div>
+            <div class="stat-val" style="color:var(--amber)">3</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Resolved (24j)</div>
+            <div class="stat-val" style="color:var(--green)">12</div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Alert Log — klik untuk detail</span>
+            <div style="display:flex;gap:6px">
+              <button class="tag tag-red" onclick="filterAlerts('err')" style="cursor:pointer">Critical</button>
+              <button class="tag tag-amber" onclick="filterAlerts('warn')" style="cursor:pointer">Warning</button>
+              <button class="tag tag-green" onclick="filterAlerts('ok')" style="cursor:pointer">Resolved</button>
+              <button class="tag tag-cyan" onclick="filterAlerts('all')" style="cursor:pointer">Semua</button>
+            </div>
+          </div>
+          <div class="alert-list" id="alertListFull"></div>
+        </div>
+      </div>
+
+      <!-- PAGE: DATA QUALITY -->
+      <div class="page" id="page-quality">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Overall Score</div>
+            <div class="stat-val" style="color:var(--green)">93.2%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Records Valid</div>
+            <div class="stat-val" style="color:var(--cyan)">2.653.411</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Perlu Review</div>
+            <div class="stat-val" style="color:var(--amber)">193.980</div>
+          </div>
+        </div>
+        <div class="grid-2b">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Quality Trend (7 hari)</span></div>
+            <div style="height:200px"><canvas id="qualityChart"></canvas></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Quality per OPD</span></div>
+            <div style="height:200px"><canvas id="qualityBar"></canvas></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Dimensi Kualitas</span></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Dimensi</th>
+                <th>Score</th>
+                <th>Target</th>
+                <th>Trend</th>
+                <th>OPD Terendah</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Completeness</td>
+                <td><span style="color:var(--cyan);font-family:'Space Mono',monospace">96.1%</span></td>
+                <td>95%</td>
+                <td><span class="trend-up">↑ 0.4%</span></td>
+                <td>Disnaker</td>
+              </tr>
+              <tr>
+                <td>Accuracy</td>
+                <td><span style="color:var(--green);font-family:'Space Mono',monospace">91.8%</span></td>
+                <td>90%</td>
+                <td><span class="trend-up">↑ 0.2%</span></td>
+                <td>BPKD</td>
+              </tr>
+              <tr>
+                <td>Timeliness</td>
+                <td><span style="color:var(--amber);font-family:'Space Mono',monospace">91.7%</span></td>
+                <td>92%</td>
+                <td><span class="trend-dn">↓ 0.3%</span></td>
+                <td>Dinkes</td>
+              </tr>
+              <tr>
+                <td>Consistency</td>
+                <td><span style="color:var(--green);font-family:'Space Mono',monospace">94.4%</span></td>
+                <td>93%</td>
+                <td><span class="trend-up">↑ 0.6%</span></td>
+                <td>Dishub</td>
+              </tr>
+              <tr>
+                <td>Validity</td>
+                <td><span style="color:var(--cyan);font-family:'Space Mono',monospace">95.6%</span></td>
+                <td>94%</td>
+                <td><span class="trend-up">↑ 0.1%</span></td>
+                <td>DLH</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE: RESOURCES -->
+      <div class="page" id="page-resources">
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Server Nodes</div>
+            <div class="stat-val" style="color:var(--green)">4/4</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Uptime</div>
+            <div class="stat-val" style="color:var(--cyan)">99.97%</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Storage Free</div>
+            <div class="stat-val" style="color:var(--amber)">44 TB</div>
+          </div>
+        </div>
+        <div class="grid-2b">
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">Utilisasi Infrastruktur</span></div>
+            <div class="res-grid">
+              <div class="res-item">
+                <div class="res-label">CPU Cluster <span class="res-pct">67%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:67%;background:var(--cyan)"></div>
+                </div>
+              </div>
+              <div class="res-item">
+                <div class="res-label">RAM 512GB <span class="res-pct">54%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:54%;background:var(--green)"></div>
+                </div>
+              </div>
+              <div class="res-item">
+                <div class="res-label">Storage 200TB <span class="res-pct">78%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:78%;background:var(--amber)"></div>
+                </div>
+              </div>
+              <div class="res-item">
+                <div class="res-label">Network I/O <span class="res-pct">41%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:41%;background:var(--cyan2)"></div>
+                </div>
+              </div>
+              <div class="res-item">
+                <div class="res-label">Kafka Queue <span class="res-pct">23%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:23%;background:var(--green)"></div>
+                </div>
+              </div>
+              <div class="res-item">
+                <div class="res-label">HDFS Usage <span class="res-pct">61%</span></div>
+                <div class="res-track">
+                  <div class="res-fill" style="width:61%;background:var(--cyan)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><span class="panel-title">CPU History (1 jam)</span></div>
+            <div style="height:220px"><canvas id="cpuChart"></canvas></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Node Status</span></div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Node</th>
+                <th>Peran</th>
+                <th>CPU</th>
+                <th>RAM</th>
+                <th>Status</th>
+                <th>Uptime</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">node-01</td>
+                <td>Master / NameNode</td>
+                <td>72%</td>
+                <td>58%</td>
+                <td><span class="status-pill" style="background:rgba(0,229,153,0.1);color:var(--green)"><i
+                      class="ti ti-circle-check"></i> Online</span></td>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">47d 14h</td>
+              </tr>
+              <tr>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">node-02</td>
+                <td>DataNode / Worker</td>
+                <td>61%</td>
+                <td>52%</td>
+                <td><span class="status-pill" style="background:rgba(0,229,153,0.1);color:var(--green)"><i
+                      class="ti ti-circle-check"></i> Online</span></td>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">47d 14h</td>
+              </tr>
+              <tr>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">node-03</td>
+                <td>DataNode / Worker</td>
+                <td>69%</td>
+                <td>55%</td>
+                <td><span class="status-pill" style="background:rgba(0,229,153,0.1);color:var(--green)"><i
+                      class="ti ti-circle-check"></i> Online</span></td>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">47d 14h</td>
+              </tr>
+              <tr>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">node-04</td>
+                <td>Edge / Kafka Broker</td>
+                <td>45%</td>
+                <td>41%</td>
+                <td><span class="status-pill" style="background:rgba(0,229,153,0.1);color:var(--green)"><i
+                      class="ti ti-circle-check"></i> Online</span></td>
+                <td style="font-family:'Space Mono',monospace;font-size:11px">47d 14h</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAGE: SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="panel" style="max-width:600px">
+          <div class="panel-head"><span class="panel-title">Preferensi Dashboard</span></div>
+          <div class="settings-section">
+            <div class="settings-title">Notifikasi</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Alert real-time</div>
+                <div class="settings-sub">Tampilkan notifikasi saat anomali terdeteksi</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Email digest harian</div>
+                <div class="settings-sub">Ringkasan dikirim pukul 07:00 WIB</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Notifikasi storage 80%</div>
+                <div class="settings-sub">Peringatan sebelum kapasitas penuh</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">Tampilan</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Auto-refresh data</div>
+                <div class="settings-sub">Perbarui chart setiap 3 detik</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Animasi chart</div>
+                <div class="settings-sub">Efek transisi pada grafik</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">Koneksi</div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Data Lake endpoint</div>
+                <div class="settings-sub" style="font-family:'Space Mono',monospace">hdfs://node-01:9000/datalake</div>
+              </div><span class="tag tag-green"><i class="ti ti-circle-check"></i> Terhubung</span>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Tableau Server</div>
+                <div class="settings-sub" style="font-family:'Space Mono',monospace">https://tableau.balikpapan.go.id
+                </div>
+              </div><span class="tag tag-green"><i class="ti ti-circle-check"></i> Terhubung</span>
+            </div>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Kafka Broker</div>
+                <div class="settings-sub" style="font-family:'Space Mono',monospace">node-04:9092</div>
+              </div><span class="tag tag-green"><i class="ti ti-circle-check"></i> Terhubung</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /body-wrap -->
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" style="position:relative">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-title" id="modalTitle">-</div>
+      <div class="modal-sub" id="modalSub">-</div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const C = { cyan: '#00D4FF', cyan2: '#00A8CC', green: '#00E599', green2: '#00B876', amber: '#FFB020', red: '#FF4D6D', purple: '#A78BFA', text2: '#7A9DBF', text3: '#3A5A7A', navy2: '#0D1F35' };
+
+    /* ─── DATA ─── */
+    const OPDS = [
+      { id: 'disdukcapil', name: 'Disdukcapil', full: 'Dinas Kependudukan & Catatan Sipil', records: '1.247.382', pct: 92, color: C.cyan, latency: '98ms', status: 'ok', desc: 'KTP, KK, Akta Kelahiran, Akta Pernikahan' },
+      { id: 'bpkd', name: 'BPKD', full: 'Badan Pengelola Keuangan Daerah', records: '847.219', pct: 78, color: C.amber, latency: '287ms', status: 'warn', desc: 'APBD, Realisasi Anggaran, Kas Daerah' },
+      { id: 'dinkes', name: 'Dinkes', full: 'Dinas Kesehatan', records: '634.512', pct: 85, color: C.cyan2, latency: '340ms', status: 'warn', desc: 'Data Puskesmas, Rumah Sakit, Vaksinasi' },
+      { id: 'disdik', name: 'Disdik', full: 'Dinas Pendidikan', records: '528.903', pct: 96, color: C.green, latency: '112ms', status: 'ok', desc: 'Data Sekolah, Siswa, Guru, UN' },
+      { id: 'dpmptsp', name: 'DPMPTSP', full: 'Dinas Penanaman Modal & Pelayanan Terpadu', records: '312.447', pct: 91, color: C.green2, latency: '145ms', status: 'ok', desc: 'Perizinan, Investasi, SIUP, IMB' },
+      { id: 'dishub', name: 'Dishub', full: 'Dinas Perhubungan', records: '289.114', pct: 88, color: C.cyan, latency: '178ms', status: 'ok', desc: 'Transportasi, Parkir, Terminal' },
+      { id: 'dlh', name: 'DLH', full: 'Dinas Lingkungan Hidup', records: '201.338', pct: 82, color: C.cyan2, latency: '201ms', status: 'ok', desc: 'AMDAL, Limbah, Kualitas Udara & Air' },
+      { id: 'dispora', name: 'Dispora', full: 'Dinas Pemuda & Olahraga', records: '178.491', pct: 94, color: C.green, latency: '124ms', status: 'ok', desc: 'Atlet, Event Olahraga, Fasilitas' },
+      { id: 'disnaker', name: 'Disnaker', full: 'Dinas Ketenagakerjaan', records: '156.203', pct: 79, color: C.amber, latency: '263ms', status: 'warn', desc: 'Data Tenaga Kerja, UMK, Lowongan' },
+      { id: 'diskominfo', name: 'Diskominfo', full: 'Dinas Komunikasi & Informatika', records: '143.882', pct: 97, color: C.green2, latency: '88ms', status: 'ok', desc: 'Sistem Informasi, Internet, E-Gov' },
+    ];
+    const ALERTS = [
+      { type: 'err', icon: 'ti-circle-x', title: 'Koneksi BPKD timeout', meta: '09:17 · Retry ke-3 · ETL-job-bpkd-hourly', detail: 'Pipeline ETL BPKD mengalami timeout saat koneksi ke database sumber. Sistem sedang melakukan retry otomatis. Estimasi resolve: 15 menit.' },
+      { type: 'warn', icon: 'ti-alert-triangle', title: 'ETL Dinkes latency tinggi', meta: '09:42 · 340ms · threshold 300ms', detail: 'Latency pipeline Dinkes melebihi batas normal. Kemungkinan penyebab: beban tinggi di server Dinkes atau jaringan lambat.' },
+      { type: 'warn', icon: 'ti-alert-triangle', title: 'Storage mendekati 80%', meta: '09:15 · Saat ini 78% · Threshold 80%', detail: 'Kapasitas penyimpanan mendekati batas peringatan. Perlu evaluasi data retention policy atau ekspansi storage dalam 2 minggu ke depan.' },
+      { type: 'warn', icon: 'ti-alert-triangle', title: 'Disnaker latency 263ms', meta: '09:50 · Mendekati threshold', detail: 'Latency Disnaker meningkat dalam 30 menit terakhir. Dipantau, belum memerlukan tindakan segera.' },
+      { type: 'ok', icon: 'ti-circle-check', title: 'Disdukcapil sync selesai', meta: '09:30 · 1.247.382 rows berhasil', detail: 'Batch ingesti harian Disdukcapil selesai sukses. Semua data tervalidasi dan tersimpan di Data Lake.', resolved: true },
+      { type: 'ok', icon: 'ti-circle-check', title: 'Spark job kependudukan OK', meta: '09:00 · Duration: 4m 12s', detail: 'Spark aggregation job untuk dashboard kependudukan selesai dalam waktu normal.', resolved: true },
+      { type: 'info', icon: 'ti-info-circle', title: 'Tableau refresh terjadwal', meta: '10:00 · Dashboard Eksekutif', detail: 'Refresh dashboard eksekutif dijadwalkan pukul 10:00. Estimasi durasi 3-5 menit.' },
+      { type: 'ok', icon: 'ti-circle-check', title: 'Backup harian berhasil', meta: '03:00 · Full backup 61TB', detail: 'Backup harian berhasil diselesaikan dini hari. Semua data aman.', resolved: true },
+    ];
+    const PIPES = [
+      { name: 'ETL Engine', pct: 88, color: C.green, status: 'running' },
+      { name: 'Kafka Broker', pct: 94, color: C.cyan, status: 'running' },
+      { name: 'Spark Master', pct: 76, color: C.amber, status: 'running' },
+      { name: 'Tableau API', pct: 99, color: C.green2, status: 'running' },
+      { name: 'Elasticsearch', pct: 82, color: C.cyan2, status: 'running' },
+      { name: 'Backup Sched.', pct: 100, color: C.green, status: 'idle' },
+      { name: 'HDFS NameNode', pct: 71, color: C.cyan, status: 'running' },
+      { name: 'Data Catalog', pct: 95, color: C.green2, status: 'running' },
+      { name: 'API Gateway', pct: 0, color: C.red, status: 'error' },
+    ];
+    const JOBS = [
+      { job: 'etl-disdukcapil-daily', status: 'ok', start: '06:00', dur: '12m 34s', rec: '1.247.382', src: 'Disdukcapil' },
+      { job: 'etl-bpkd-hourly', status: 'err', start: '09:00', dur: '—', rec: '—', src: 'BPKD' },
+      { job: 'spark-agg-kependudukan', status: 'ok', start: '09:00', dur: '4m 12s', rec: '847.219', src: 'Disdukcapil' },
+      { job: 'etl-dinkes-hourly', status: 'warn', start: '09:30', dur: '8m 01s', rec: '634.512', src: 'Dinkes' },
+      { job: 'etl-disdik-hourly', status: 'ok', start: '09:00', dur: '3m 22s', rec: '528.903', src: 'Disdik' },
+      { job: 'kafka-stream-dishub', status: 'ok', start: '00:00', dur: 'ongoing', rec: '289.114', src: 'Dishub' },
+      { job: 'tableau-refresh-exec', status: 'ok', start: '09:30', dur: '3m 47s', rec: '—', src: 'All' },
+      { job: 'backup-daily', status: 'ok', start: '03:00', dur: '41m 12s', rec: '61TB', src: 'System' },
+    ];
+    const LOGS = [
+      { t: '09:52:01', src: 'etl', cat: 'ETL', msg: 'Disdukcapil batch #2849 → 42.100 rows committed' },
+      { t: '09:51:58', src: 'api', cat: 'API', msg: 'GET /v1/query/kependudukan 200 OK 48ms' },
+      { t: '09:51:44', src: 'db', cat: 'DB', msg: 'Spark checkpoint job-004 success' },
+      { t: '09:51:31', src: 'sec', cat: 'SEC', msg: 'Auth failed: user dpmptsp_03 — IP 10.8.4.22' },
+      { t: '09:51:17', src: 'etl', cat: 'ETL', msg: 'BPKD retry #3 — connection timeout' },
+      { t: '09:51:09', src: 'api', cat: 'API', msg: 'POST /v1/ingest/dishub 201 CREATED 2.891 rows' },
+      { t: '09:50:55', src: 'sys', cat: 'SYS', msg: 'Kafka consumer lag: 0 — nominal' },
+      { t: '09:50:41', src: 'etl', cat: 'ETL', msg: 'Dinkes latency=340ms threshold=300ms WARN' },
+      { t: '09:50:28', src: 'db', cat: 'DB', msg: 'Tableau refresh dashboard-eksekutif triggered' },
+      { t: '09:50:14', src: 'api', cat: 'API', msg: 'GET /v1/quality/report 200 OK 91ms' },
+      { t: '09:50:01', src: 'sys', cat: 'SYS', msg: 'Storage 78.2% — approaching threshold' },
+      { t: '09:49:44', src: 'etl', cat: 'ETL', msg: 'DLH batch complete 201.338 rows' },
+    ];
+
+    /* ─── CLOCK ─── */
+    function tick() { const n = new Date(); const p = x => String(x).padStart(2, '0'); document.getElementById('clk').textContent = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`; }
+    setInterval(tick, 1000); tick();
+
+    /* ─── PAGE NAV ─── */
+    function setPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      document.querySelectorAll('.nav-pill').forEach(b => { if (b.textContent.toLowerCase().includes(id.replace('quality', 'kualitas').replace('resources', 'setting').replace('settings', 'setting'))) b.classList.add('active'); });
+    }
+    function setSidebar(el) { document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+
+    /* ─── RENDER OPD SIDEBAR ─── */
+    const sideOPD = document.getElementById('sidebarOPD');
+    OPDS.forEach(o => {
+      const st = o.pct >= 90 ? C.green : o.pct >= 80 ? C.amber : C.red;
+      sideOPD.innerHTML += `<div class="opd-status-mini"><div class="opd-dot-mini" style="background:${st}"></div>${o.name}<span style="margin-left:auto;font-size:10px;font-family:'Space Mono',monospace;color:${st}">${o.pct}%</span></div>`;
+    });
+
+    /* ─── RENDER OPD LIST ─── */
+    function renderOPDList(containerId, clickable = false) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = '';
+      OPDS.forEach(o => {
+        const st = o.pct >= 90 ? C.green : o.pct >= 80 ? C.amber : C.red;
+        const badge = o.status === 'warn' ? `<span class="tag tag-amber" style="font-size:9px">warn</span>` : '';
+        el.innerHTML += `<div class="opd-item" id="opd-${o.id}" onclick="${clickable ? `showOPDDetail('${o.id}')` : ''}">${clickable ? '' : `<div class="opd-dot" style="background:${st}"></div>`}
+      <div class="opd-name">${o.name}</div>${badge}
+      <div class="opd-records">${o.records}</div>
+      <div class="opd-bar-track"><div class="opd-bar-fill" style="width:${o.pct}%;background:${st}"></div></div>
+      <div class="opd-pct" style="color:${st}">${o.pct}%</div>
+    </div>`;
+      });
+    }
+    renderOPDList('opdListMain');
+    renderOPDList('opdListFull', true);
+
+    /* ─── OPD DETAIL ─── */
+    let detailChartInst = null;
+    function showOPDDetail(id) {
+      document.querySelectorAll('#opdListFull .opd-item').forEach(el => el.classList.remove('selected'));
+      document.getElementById('opd-' + id).classList.add('selected');
+      const o = OPDS.find(x => x.id === id);
+      if (!o) return;
+      document.getElementById('detailName').textContent = o.full;
+      document.getElementById('detailSub').textContent = o.desc + ' · Latency: ' + o.latency;
+      document.getElementById('detailKPIs').innerHTML = `
+    <div class="detail-kpi"><div class="detail-kpi-label">Records Hari Ini</div><div class="detail-kpi-val" style="color:var(--cyan)">${o.records}</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-label">Pipeline Health</div><div class="detail-kpi-val" style="color:${o.pct >= 90 ? 'var(--green)' : 'var(--amber)'}">${o.pct}%</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-label">Avg Latency</div><div class="detail-kpi-val" style="color:var(--amber)">${o.latency}</div></div>
+    <div class="detail-kpi"><div class="detail-kpi-label">Status</div><div class="detail-kpi-val" style="color:${o.status === 'ok' ? 'var(--green)' : 'var(--amber)'}">${o.status.toUpperCase()}</div></div>
+  `;
+      document.getElementById('opdDetail').classList.add('show');
+      if (detailChartInst) detailChartInst.destroy();
+      const pts = Array.from({ length: 24 }, (_, i) => Math.round(parseInt(o.records.replace(/\./g, '')) / 24 * (0.8 + Math.random() * 0.4)));
+      detailChartInst = new Chart(document.getElementById('detailChart'), {
+        type: 'bar',
+        data: { labels: Array.from({ length: 24 }, (_, i) => i + ':00'), datasets: [{ data: pts, backgroundColor: o.color + '33', borderColor: o.color, borderWidth: 1, borderRadius: 3 }] },
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: C.text2, font: { size: 9 }, maxTicksLimit: 6 }, grid: { display: false } }, y: { ticks: { color: C.text2, font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+      });
+    }
+    function closeDetail() { document.getElementById('opdDetail').classList.remove('show'); document.querySelectorAll('#opdListFull .opd-item').forEach(el => el.classList.remove('selected')); }
+    function filterOPD(q) { document.querySelectorAll('#opdListFull .opd-item').forEach(el => { el.style.display = el.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none'; }); }
+
+    /* ─── RENDER ALERTS ─── */
+    function renderAlerts(containerId, max = 99) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = '';
+      ALERTS.slice(0, max).forEach((a, i) => {
+        el.innerHTML += `<div class="alert ${a.type}" onclick="openAlertDetail(${i})">
+      <i class="ti ${a.icon} alert-ico ${a.type}"></i>
+      <div class="alert-body"><div class="alert-title">${a.title}</div><div class="alert-meta">${a.meta}</div></div>
+      ${a.resolved ? `<span class="tag tag-green" style="flex-shrink:0">Resolved</span>` : ''}
+    </div>`;
+      });
+    }
+    renderAlerts('alertListMain', 4);
+    renderAlerts('alertListFull');
+    function filterAlerts(type) {
+      document.querySelectorAll('#alertListFull .alert').forEach((el, i) => {
+        el.style.display = (type === 'all' || ALERTS[i].type === type) ? '' : 'none';
+      });
+    }
+    function openAlertDetail(i) {
+      const a = ALERTS[i];
+      document.getElementById('modalTitle').textContent = a.title;
+      document.getElementById('modalSub').textContent = a.meta;
+      document.getElementById('modalBody').innerHTML = `<div style="color:var(--text2);font-size:13px;line-height:1.7;padding:12px 0 0">${a.detail}</div>
+  <div style="margin-top:16px;display:flex;gap:8px">
+    <button style="padding:8px 16px;background:var(--navy3);border:1px solid var(--border2);border-radius:8px;color:var(--cyan);cursor:pointer;font-size:12px" onclick="closeModal()">Tandai Selesai</button>
+    <button style="padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:12px" onclick="closeModal()">Tutup</button>
+  </div>`;
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+
+    /* ─── RENDER PIPELINE ─── */
+    const pipeEl = document.getElementById('pipeList');
+    PIPES.forEach(p => {
+      const sc = p.status === 'error' ? `<span class="tag tag-red" style="font-size:9px;margin-left:auto">DOWN</span>` : '';
+      pipeEl.innerHTML += `<div class="pipe-item">
+    <span class="pipe-name">${p.name}</span>
+    <div class="pipe-track"><div class="pipe-fill" style="width:${p.pct}%;background:${p.color}"></div></div>
+    <span class="pipe-pct" style="color:${p.color}">${p.pct}%</span>${sc}
+  </div>`;
+    });
+
+    /* ─── RENDER JOBS ─── */
+    const jobEl = document.getElementById('jobTable');
+    JOBS.forEach(j => {
+      const st = {
+        ok: `<span class="status-pill" style="background:rgba(0,229,153,0.1);color:var(--green)"><i class="ti ti-circle-check"></i> OK</span>`,
+        err: `<span class="status-pill" style="background:rgba(255,77,109,0.1);color:var(--red)"><i class="ti ti-circle-x"></i> ERROR</span>`,
+        warn: `<span class="status-pill" style="background:rgba(255,176,32,0.1);color:var(--amber)"><i class="ti ti-alert-triangle"></i> WARN</span>`
+      }[j.status];
+      jobEl.innerHTML += `<tr><td style="font-family:'Space Mono',monospace;font-size:11px">${j.job}</td><td>${st}</td><td style="font-family:'Space Mono',monospace;font-size:11px">${j.start}</td><td style="color:var(--text2)">${j.dur}</td><td style="font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan)">${j.rec}</td><td>${j.src}</td></tr>`;
+    });
+
+    /* ─── RENDER LOGS ─── */
+    function renderLogs(containerId) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = '';
+      LOGS.forEach((l, i) => {
+        el.innerHTML += `<div class="log-line" style="animation-delay:${i * 40}ms"><span class="log-t">${l.t}</span><span class="log-src ${l.src}">${l.cat}</span><span class="log-msg">${l.msg}</span></div>`;
+      });
+    }
+    renderLogs('logMain');
+
+    /* ─── MODAL ─── */
+    const MODAL_DATA = {
+      records: {
+        title: 'Total Records Ingested', sub: 'Detail ingesti data hari ini', body: `
+    <div class="modal-row"><span class="modal-key">Hari ini</span><span class="modal-val">2.847.391 rows</span></div>
+    <div class="modal-row"><span class="modal-key">Kemarin</span><span class="modal-val">2.532.847 rows</span></div>
+    <div class="modal-row"><span class="modal-key">Pertumbuhan</span><span class="modal-val" style="color:var(--green)">+12.4%</span></div>
+    <div class="modal-row"><span class="modal-key">Sumber terbesar</span><span class="modal-val">Disdukcapil (43.8%)</span></div>
+    <div class="modal-row"><span class="modal-key">Rata-rata harian (7 hari)</span><span class="modal-val">2.612.000 rows</span></div>
+  `},
+      pipeline: {
+        title: 'Status Pipeline', sub: '10 OPD tersambung aktif', body: `
+    <div class="modal-row"><span class="modal-key">OPD Online</span><span class="modal-val" style="color:var(--green)">10 / 10</span></div>
+    <div class="modal-row"><span class="modal-key">Terakhir sync</span><span class="modal-val">09:52:01 WIB</span></div>
+    <div class="modal-row"><span class="modal-key">Throughput/menit</span><span class="modal-val">3.247 rows/min</span></div>
+    <div class="modal-row"><span class="modal-key">Error rate</span><span class="modal-val">0.3%</span></div>
+  `},
+      latency: {
+        title: 'Latency Pipeline', sub: 'End-to-end measurement', body: `
+    <div class="modal-row"><span class="modal-key">Rata-rata</span><span class="modal-val">142ms</span></div>
+    <div class="modal-row"><span class="modal-key">Target SLA</span><span class="modal-val">150ms</span></div>
+    <div class="modal-row"><span class="modal-key">Tercepat (Diskominfo)</span><span class="modal-val" style="color:var(--green)">88ms</span></div>
+    <div class="modal-row"><span class="modal-key">Terlambat (Dinkes)</span><span class="modal-val" style="color:var(--red)">340ms</span></div>
+    <div class="modal-row"><span class="modal-key">P99 Latency</span><span class="modal-val">318ms</span></div>
+  `},
+      anomali: {
+        title: 'Anomali Terdeteksi', sub: '24 jam terakhir · 7 kejadian', body: `
+    <div class="modal-row"><span class="modal-key">Critical</span><span class="modal-val" style="color:var(--red)">1 kejadian</span></div>
+    <div class="modal-row"><span class="modal-key">Warning</span><span class="modal-val" style="color:var(--amber)">3 kejadian</span></div>
+    <div class="modal-row"><span class="modal-key">Resolved</span><span class="modal-val" style="color:var(--green)">3 kejadian</span></div>
+    <div class="modal-row"><span class="modal-key">Tipe terbanyak</span><span class="modal-val">Latency spike</span></div>
+    <div class="modal-row"><span class="modal-key">MTTD</span><span class="modal-val">4m 12s</span></div>
+  `},
+    };
+    function openModal(key) {
+      const d = MODAL_DATA[key]; if (!d) return;
+      document.getElementById('modalTitle').textContent = d.title;
+      document.getElementById('modalSub').textContent = d.sub;
+      document.getElementById('modalBody').innerHTML = d.body;
+      document.getElementById('modalOverlay').classList.add('show');
+    }
+    function closeModal(e) { if (!e || e.target === document.getElementById('modalOverlay')) document.getElementById('modalOverlay').classList.remove('show'); }
+
+    /* ─── CHARTS ─── */
+    Chart.defaults.color = C.text2;
+    Chart.defaults.borderColor = 'rgba(0,212,255,0.07)';
+
+    const volLabels = Array.from({ length: 60 }, (_, i) => { const m = new Date(); m.setMinutes(m.getMinutes() - 59 + i); return m.getMinutes() + 'm'; });
+    const volData = Array.from({ length: 60 }, (_, i) => Math.round(2800 + Math.sin(i * 0.25) * 900 + Math.random() * 700));
+    const volCtx = document.getElementById('volChart').getContext('2d');
+    const volChart = new Chart(volCtx, {
+      type: 'line',
+      data: {
+        labels: volLabels, datasets: [
+          { label: 'Records/min', data: volData, borderColor: C.cyan, borderWidth: 1.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(0,212,255,0.05)', tension: 0.4 },
+          { label: 'Avg', data: volData.map(() => 3000), borderColor: 'rgba(0,212,255,0.2)', borderWidth: 1, borderDash: [4, 4], pointRadius: 0, fill: false }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: C.navy2, borderColor: C.cyan, borderWidth: 1 } }, scales: { x: { ticks: { maxTicksLimit: 8, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v, font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+    });
+    setInterval(() => { volChart.data.datasets[0].data.push(Math.round(2800 + Math.sin(Date.now() * 0.0008) * 900 + Math.random() * 700)); volChart.data.datasets[0].data.shift(); volChart.update('none'); }, 3000);
+
+    new Chart(document.getElementById('catBar').getContext('2d'), {
+      type: 'bar', data: { labels: ['Kependudukan', 'Keuangan', 'Kesehatan', 'Pendidikan', 'Perizinan', 'Lainnya'], datasets: [{ data: [1247, 847, 634, 528, 312, 279], backgroundColor: [C.cyan + '88', C.cyan + '66', C.cyan + '55', C.cyan + '44', C.cyan + '33', C.cyan + '22'], borderRadius: 3 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { font: { size: 9 } }, grid: { display: false } }, y: { ticks: { callback: v => v + 'rb', font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+    });
+
+    function miniD(id, pct, color) { new Chart(document.getElementById(id).getContext('2d'), { type: 'doughnut', data: { datasets: [{ data: [pct, 100 - pct], backgroundColor: [color, 'rgba(255,255,255,0.04)'], borderWidth: 0, borderRadius: 2 }] }, options: { cutout: '70%', plugins: { legend: { display: false }, tooltip: { enabled: false } }, animation: { duration: 1000 } } }); }
+    miniD('dq1', 96.1, C.cyan); miniD('dq2', 91.8, C.green); miniD('dq3', 91.7, C.amber);
+
+    const tpData = Array.from({ length: 60 }, (_, i) => Math.round(3000 + Math.sin(i * 0.3) * 600 + Math.random() * 400));
+    new Chart(document.getElementById('throughputChart').getContext('2d'), {
+      type: 'line', data: { labels: volLabels, datasets: [{ label: 'Records/min', data: tpData, borderColor: C.green, borderWidth: 1.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(0,229,153,0.05)', tension: 0.4 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxTicksLimit: 6, font: { size: 9 } }, grid: { display: false } }, y: { ticks: { font: { size: 9 }, callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+    });
+
+    const qDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+    new Chart(document.getElementById('qualityChart').getContext('2d'), {
+      type: 'line', data: {
+        labels: qDays, datasets: [
+          { label: 'Completeness', data: [94.2, 94.8, 95.1, 95.6, 95.9, 96.0, 96.1], borderColor: C.cyan, borderWidth: 1.5, pointRadius: 3, tension: 0.4, fill: false },
+          { label: 'Accuracy', data: [90.5, 91.0, 91.2, 91.5, 91.6, 91.7, 91.8], borderColor: C.green, borderWidth: 1.5, pointRadius: 3, tension: 0.4, fill: false },
+          { label: 'Timeliness', data: [92.4, 92.1, 92.0, 91.9, 91.8, 91.7, 91.7], borderColor: C.amber, borderWidth: 1.5, pointRadius: 3, tension: 0.4, fill: false },
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 10 }, boxWidth: 10 } } }, scales: { x: { ticks: { font: { size: 9 } }, grid: { display: false } }, y: { min: 88, max: 100, ticks: { callback: v => v + '%', font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+    });
+    new Chart(document.getElementById('qualityBar').getContext('2d'), {
+      type: 'bar', data: { labels: OPDS.map(o => o.name), datasets: [{ label: 'Quality', data: [96, 85, 88, 97, 93, 90, 84, 95, 81, 98], backgroundColor: OPDS.map(o => o.pct >= 90 ? C.green + '88' : o.pct >= 80 ? C.amber + '88' : C.red + '88'), borderRadius: 4 }] },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { min: 75, max: 100, ticks: { callback: v => v + '%', font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } }, y: { ticks: { font: { size: 9 } }, grid: { display: false } } } }
+    });
+
+    const cpuH = Array.from({ length: 60 }, (_, i) => Math.round(55 + Math.sin(i * 0.2) * 18 + Math.random() * 12));
+    new Chart(document.getElementById('cpuChart').getContext('2d'), {
+      type: 'line', data: {
+        labels: volLabels, datasets: [
+          { label: 'CPU', data: cpuH, borderColor: C.cyan, borderWidth: 1.5, pointRadius: 0, fill: true, backgroundColor: 'rgba(0,212,255,0.05)', tension: 0.4 },
+          { label: 'Threshold 80%', data: cpuH.map(() => 80), borderColor: C.red + '66', borderWidth: 1, borderDash: [4, 4], pointRadius: 0, fill: false }
+        ]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { font: { size: 10 }, boxWidth: 10 } } }, scales: { x: { ticks: { maxTicksLimit: 6, font: { size: 9 } }, grid: { display: false } }, y: { min: 0, max: 100, ticks: { callback: v => v + '%', font: { size: 9 } }, grid: { color: 'rgba(0,212,255,0.06)' } } } }
+    });
+
+    /* ─── SIMULATE TICK ─── */
+    function simulateTick() {
+      const nums = [2847391, 2848012, 2849331, 2851002];
+      document.getElementById('kv1').textContent = nums[Math.floor(Math.random() * nums.length)].toLocaleString('id-ID').replace(/,/g, '.');
+      document.getElementById('kv3').textContent = (140 + Math.round(Math.random() * 20)) + 'ms';
+    }
+    setInterval(simulateTick, 8000);
+  </script>
+</body>
+
+</html>
