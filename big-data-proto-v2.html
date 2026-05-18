@@ -1121,6 +1121,404 @@
     .detail-panel.show {
       display: block
     }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 1024px) {
+      .topbar-center {
+        gap: 8px
+      }
+
+      .nav-btn {
+        padding: 6px 12px;
+        font-size: 11px
+      }
+
+      .sidebar {
+        width: 200px
+      }
+
+      .main {
+        padding: 16px
+      }
+
+      .kpi-row {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .g3 {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .g13 {
+        grid-template-columns: 1fr
+      }
+
+      .g31 {
+        grid-template-columns: 1fr
+      }
+
+      .g2 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --sidebar: 0;
+        --topbar: 56px
+      }
+
+      html,
+      body {
+        font-size: 14px
+      }
+
+      .topbar {
+        padding: 0 12px;
+        flex-wrap: wrap;
+        gap: 8px
+      }
+
+      .logo-text {
+        font-size: 12px
+      }
+
+      .logo-sub {
+        font-size: 9px
+      }
+
+      .topbar-center {
+        display: none;
+        order: 3;
+        width: 100%;
+        gap: 4px
+      }
+
+      .topbar-center.show {
+        display: flex
+      }
+
+      .nav-btn {
+        padding: 5px 10px;
+        font-size: 10px;
+        flex: 1
+      }
+
+      .topbar-right {
+        gap: 8px
+      }
+
+      .period-select {
+        font-size: 11px;
+        padding: 5px 8px
+      }
+
+      .topbar-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px
+      }
+
+      .avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 10px
+      }
+
+      .sidebar {
+        width: 0;
+        overflow: hidden;
+        position: fixed;
+        height: 100%;
+        left: 0;
+        top: var(--topbar);
+        z-index: 50;
+        transition: width 0.3s;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        flex-direction: column
+      }
+
+      .sidebar.show {
+        width: 240px;
+        box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1)
+      }
+
+      .main {
+        padding: 12px;
+        gap: 12px
+      }
+
+      .page {
+        gap: 12px
+      }
+
+      .kpi-row {
+        grid-template-columns: 1fr;
+        gap: 10px
+      }
+
+      .kpi {
+        padding: 14px 16px
+      }
+
+      .kpi-label {
+        font-size: 10px
+      }
+
+      .kpi-val {
+        font-size: 24px
+      }
+
+      .kpi-badge {
+        font-size: 9px;
+        padding: 2px 6px
+      }
+
+      .g2,
+      .g3,
+      .g13,
+      .g31 {
+        grid-template-columns: 1fr;
+        gap: 12px
+      }
+
+      .panel {
+        padding: 14px 16px;
+        border-radius: 10px
+      }
+
+      .ph {
+        margin-bottom: 12px
+      }
+
+      .pt {
+        font-size: 12px
+      }
+
+      .ps {
+        font-size: 10px
+      }
+
+      .page-title {
+        font-size: 18px
+      }
+
+      .page-sub {
+        font-size: 12px
+      }
+
+      .breadcrumb {
+        font-size: 10px
+      }
+
+      .tag {
+        font-size: 9px;
+        padding: 2px 7px
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 13px
+      }
+
+      .sidebar-group {
+        padding: 16px 12px 6px;
+        font-size: 9px
+      }
+
+      .sidebar-item {
+        padding: 8px 10px;
+        font-size: 12px;
+        margin: 1px 6px
+      }
+
+      .opd-chips {
+        padding: 8px 12px;
+        gap: 3px
+      }
+
+      .opd-chip {
+        padding: 6px 8px;
+        font-size: 11px
+      }
+
+      .btn-primary,
+      .btn-sec {
+        padding: 9px 12px;
+        font-size: 12px;
+        border-radius: 8px
+      }
+
+      /* HAMBURGER MENU */
+      .hamburger {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        width: 28px;
+        height: 28px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        order: 2
+      }
+
+      .hamburger span {
+        width: 100%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 1px;
+        transition: all 0.3s
+      }
+
+      .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg) translate(8px, 8px)
+      }
+
+      .hamburger.active span:nth-child(2) {
+        opacity: 0
+      }
+
+      .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(8px, -8px)
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --topbar: 52px
+      }
+
+      .topbar {
+        padding: 0px 10px 80px 10p
+      }
+
+      .logo-icon {
+        width: 28px;
+        height: 28px
+      }
+
+      .logo-icon i {
+        font-size: 16px
+      }
+
+      .logo-text {
+        font-size: 11px
+      }
+
+      .logo-sub {
+        display: none
+      }
+
+      .topbar-right {
+        gap: 6px
+      }
+
+      .topbar-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        border-radius: 6px
+      }
+
+      .avatar {
+        width: 24px;
+        height: 24px;
+        font-size: 9px
+      }
+
+      .period-select {
+        font-size: 10px;
+        padding: 4px 6px
+      }
+
+      .main {
+        padding: 10px;
+        gap: 10px
+      }
+
+      .page {
+        gap: 10px
+      }
+
+      .page-title {
+        font-size: 16px
+      }
+
+      .page-header {
+        margin-bottom: 2px
+      }
+
+      .kpi-row {
+        gap: 8px
+      }
+
+      .kpi {
+        padding: 12px 14px
+      }
+
+      .kpi-label {
+        font-size: 9px
+      }
+
+      .kpi-val {
+        font-size: 20px
+      }
+
+      .kpi-trend {
+        font-size: 10px
+      }
+
+      .panel {
+        padding: 12px 14px;
+        border-radius: 8px
+      }
+
+      .pt {
+        font-size: 11px
+      }
+
+      .ps {
+        font-size: 9px
+      }
+
+      .tag {
+        font-size: 8px;
+        padding: 2px 6px
+      }
+
+      .sidebar {
+        width: 0
+      }
+
+      .sidebar.show {
+        width: 220px
+      }
+
+      .search-input {
+        padding: 7px 8px;
+        font-size: 12px
+      }
+
+      .btn-primary,
+      .btn-sec {
+        padding: 8px 10px;
+        font-size: 11px
+      }
+
+      .hamburger {
+        width: 24px;
+        height: 24px;
+        gap: 3px;
+        padding: 3px
+      }
+
+      .hamburger span {
+        height: 1.5px
+      }
+    }
   </style>
 </head>
 
@@ -1143,6 +1541,11 @@
       <button class="nav-btn" onclick="goPage('kepuasan',this)"><i class="ti ti-star"></i> Kepuasan</button>
       <button class="nav-btn" onclick="goPage('tren',this)"><i class="ti ti-chart-line"></i> Tren</button>
     </div>
+    <button class="hamburger" onclick="toggleSidebar(this)">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
     <div class="topbar-right">
       <select class="period-select" onchange="updatePeriod(this.value)">
         <option value="7">7 hari terakhir</option>
@@ -1587,14 +1990,34 @@
     function tick() { const n = new Date(); const p = x => String(x).padStart(2, '0'); const s = `${p(n.getHours())}:${p(n.getMinutes())}:${p(n.getSeconds())}`; document.getElementById('lastUpdate').textContent = s; }
     setInterval(tick, 1000); tick();
 
+    /* ═══ MOBILE MENU ═══ */
+    function toggleSidebar(btn) {
+      const sidebar = document.querySelector('.sidebar');
+      btn.classList.toggle('active');
+      sidebar.classList.toggle('show');
+    }
+
     /* ═══ NAV ═══ */
     function goPage(id, el) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('page-' + id).classList.add('active');
       if (el && el.classList.contains('nav-btn')) el.classList.add('active');
+      closeSidebar();
     }
-    function sideActive(el) { document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+    function sideActive(el) {
+      document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+      el.classList.add('active');
+      closeSidebar();
+    }
+    function closeSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const hamburger = document.querySelector('.hamburger');
+      if (sidebar && hamburger) {
+        sidebar.classList.remove('show');
+        hamburger.classList.remove('active');
+      }
+    }
 
     /* ═══ STARS ═══ */
     function renderStars(el, score, max = 5) { const full = Math.round(score / 20); let h = ''; for (let i = 0; i < max; i++)h += `<i class="ti ti-star${i < full ? '-filled' : ''}" style="color:${i < full ? '#F59E0B' : '#D1D5DB'};font-size:20px"></i>`; el.innerHTML = h; }
