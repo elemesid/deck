@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JUSI — Prototipe Lengkap (Aplikasi, Dashboard Lembaga, Panel Admin)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#062A23; --em:#0B3B33; --em2:#124A40; --em3:#0F4739;
+  --gold:#C8963E; --goldlt:#E7C67E; --cream:#F7F3EA; --sand:#EFE8DA;
+  --line:#E3DCCD; --muted:#6E7F79; --paper:#fff; --ok:#2E8B6A; --warn:#A2711A; --bad:#B3403F;
+  --sans:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --disp:'Bricolage Grotesque','Plus Jakarta Sans',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans);min-height:100vh;color:#DCE8E3;
+  background:radial-gradient(1100px 600px at 12% -10%,#10493d 0%,transparent 60%),
+             radial-gradient(900px 500px at 108% 108%,#241500 0%,transparent 55%),#061914;
+}
+button{font-family:inherit}
+
+/* ================= SHELL ================= */
+.topbar{
+  position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  padding:14px 24px;background:rgba(4,17,13,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,.08)
+}
+.brandmark{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.brandmark svg{width:30px;height:30px}
+.brandmark b{font-family:var(--disp);font-size:19px;color:#fff;line-height:1;letter-spacing:-.02em;display:block}
+.brandmark span{font-size:8.5px;letter-spacing:.2em;color:var(--goldlt);text-transform:uppercase}
+.prodtabs{display:flex;gap:6px;background:rgba(255,255,255,.07);border-radius:13px;padding:4px}
+.prodtab{
+  border:0;background:none;color:#9BB6AD;font-size:13px;font-weight:600;padding:9px 15px;
+  border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.18s
+}
+.prodtab svg{width:15px;height:15px}
+.prodtab.on{background:var(--gold);color:#2A1B03}
+.prodtab:not(.on):hover{color:#fff}
+.hint{margin-left:auto;font-size:12px;color:#7C968E;display:flex;align-items:center;gap:7px}
+.hint svg{width:14px;height:14px;color:var(--gold)}
+
+/* ================= STAGE ================= */
+.stage{padding:34px 24px 60px;display:none}
+.stage.on{display:block}
+.stage-head{max-width:1180px;margin:0 auto 22px}
+.stage-head h1{font-family:var(--disp);font-size:26px;font-weight:700;color:#fff;margin:0 0 6px;letter-spacing:-.02em}
+.stage-head p{font-size:13.5px;color:#93ADA5;margin:0;max-width:640px;line-height:1.6}
+.stage-inner{display:flex;justify-content:center}
+
+/* ---- kerangka ponsel ---- */
+.device{width:390px;height:844px;background:#04120e;border-radius:52px;padding:11px;position:relative;
+  box-shadow:0 0 0 2px #2a3a35,0 40px 90px -20px rgba(0,0,0,.85),0 0 120px -50px var(--gold);flex:0 0 auto}
+.device::after{content:"";position:absolute;left:50%;bottom:9px;transform:translateX(-50%);width:126px;height:5px;
+  border-radius:3px;background:rgba(255,255,255,.5);z-index:40}
+.viewport{position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;background:var(--cream);color:var(--ink)}
+.notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:112px;height:29px;background:#04120e;border-radius:20px;z-index:35}
+.statusbar{position:absolute;top:0;left:0;right:0;height:48px;z-index:30;display:flex;align-items:center;
+  justify-content:space-between;padding:14px 26px 0;font-size:12.5px;font-weight:700;pointer-events:none;color:var(--ink)}
+.statusbar.light{color:#fff}
+.batt{width:22px;height:11px;border:1.4px solid currentColor;border-radius:3px;position:relative;opacity:.9}
+.batt::before{content:"";position:absolute;inset:1.5px;right:6px;background:currentColor;border-radius:1px}
+
+.screen{position:absolute;inset:0;overflow-y:auto;background:var(--cream);display:none;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.screen.act{display:block;animation:slide .28s cubic-bezier(.22,.8,.3,1)}
+@keyframes slide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+.pad{padding:0 20px}
+.tail{height:104px}
+
+/* ---- kerangka peramban ---- */
+.win{width:1180px;max-width:100%;border-radius:16px;overflow:hidden;background:#fff;color:var(--ink);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.09)}
+.win-chrome{display:flex;align-items:center;gap:10px;padding:11px 15px;background:#E9EFEC;border-bottom:1px solid #D8E1DC}
+.dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+.url{flex:1;background:#fff;border:1px solid #DDE5E1;border-radius:8px;padding:6px 12px;font-size:12px;color:#7C8B85;max-width:420px}
+.win-body{display:flex;height:672px}
+.side{width:232px;flex:0 0 auto;background:var(--em);color:#fff;padding:20px 14px;overflow-y:auto}
+.side-brand{display:flex;align-items:center;gap:10px;padding:0 8px 16px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:14px}
+.side-brand b{font-family:var(--disp);font-size:17px;letter-spacing:-.02em;display:block;line-height:1.1}
+.side-brand span{font-size:9px;letter-spacing:.15em;color:var(--goldlt);text-transform:uppercase}
+.side-lbl{font-size:9px;letter-spacing:.18em;color:#7FA396;text-transform:uppercase;padding:14px 10px 7px}
+.snav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;color:#B6CEC6;font-size:13px;
+  font-weight:500;padding:10px;border-radius:10px;cursor:pointer;text-align:left;transition:.15s}
+.snav svg{width:16px;height:16px;flex:0 0 auto}
+.snav:hover{background:rgba(255,255,255,.07);color:#fff}
+.snav.on{background:rgba(232,199,126,.16);color:#fff;font-weight:600}
+.snav .badge{margin-left:auto;background:var(--gold);color:#2A1B03;font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px}
+.side-foot{margin-top:18px;padding:12px 10px;border-top:1px solid rgba(255,255,255,.12);font-size:11.5px;color:#8FB0A6}
+.side-foot b{display:block;color:#fff;font-size:12.5px}
+
+.main{flex:1;background:#F5F7F6;overflow-y:auto;padding:24px 28px 40px}
+.wpage{display:none}
+.wpage.act{display:block;animation:fade .26s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.wtop{display:flex;align-items:flex-start;gap:16px;margin-bottom:20px}
+.wtop h2{font-family:var(--disp);font-size:22px;margin:0 0 4px;letter-spacing:-.02em;color:var(--ink)}
+.wtop p{margin:0;font-size:13px;color:var(--muted);max-width:560px;line-height:1.55}
+.wtop .acts{margin-left:auto;display:flex;gap:8px;flex:0 0 auto}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi{background:#fff;border:1px solid #E4EAE7;border-radius:14px;padding:14px 16px}
+.kpi b{display:block;font-family:var(--disp);font-size:23px;font-weight:800;letter-spacing:-.03em;color:var(--em)}
+.kpi span{font-size:11.5px;color:var(--muted)}
+.kpi.dark{background:var(--em);border-color:var(--em)}
+.kpi.dark b{color:var(--goldlt)}
+.kpi.dark span{color:#9CBBB1}
+
+.card{background:#fff;border:1px solid #E4EAE7;border-radius:14px;overflow:hidden;margin-bottom:16px}
+.card-h{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #EDF1EF}
+.card-h b{font-size:14px;font-weight:700}
+.card-h .sub{font-size:11.5px;color:var(--muted)}
+.card-h .acts{margin-left:auto;display:flex;gap:8px}
+.card-b{padding:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+table.t{width:100%;border-collapse:collapse}
+table.t th{background:#F1F5F3;color:var(--em);font-size:11.5px;font-weight:700;text-align:left;padding:10px 14px;white-space:nowrap}
+table.t td{padding:12px 14px;font-size:12.5px;border-bottom:1px solid #EDF1EF;vertical-align:middle}
+table.t tr:last-child td{border-bottom:0}
+table.t tr.click{cursor:pointer}
+table.t tr.click:hover td{background:#F7FAF9}
+.tname{font-weight:600;color:var(--ink);display:block}
+.tsub{font-size:11px;color:var(--muted)}
+
+.pill{display:inline-block;padding:4px 9px;border-radius:8px;font-size:10.5px;font-weight:700;white-space:nowrap}
+.p-ok{background:#E4F3EC;color:var(--ok)}
+.p-wait{background:#FBF1E0;color:var(--warn)}
+.p-new{background:#E9EEFC;color:#3557C8}
+.p-bad{background:#FBECEC;color:var(--bad)}
+.p-mut{background:#EEF1F0;color:var(--muted)}
+
+.btn{border:0;border-radius:10px;padding:9px 14px;font-size:12.5px;font-weight:700;cursor:pointer;transition:.15s;
+  display:inline-flex;align-items:center;gap:7px}
+.btn:active{transform:scale(.97)}
+.btn svg{width:14px;height:14px}
+.b-gold{background:linear-gradient(135deg,#E7C67E,#C8963E 65%);color:#2A1B03}
+.b-em{background:var(--em);color:#fff}
+.b-gh{background:#fff;color:var(--em);border:1px solid #DCE4E0}
+.b-bad{background:#FBECEC;color:var(--bad)}
+.b-sm{padding:6px 10px;font-size:11.5px;border-radius:8px}
+
+.bar{height:7px;border-radius:4px;background:var(--sand);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--goldlt))}
+.bar.sm{height:5px}
+
+.tl{position:relative;padding-left:26px}
+.tl::before{content:"";position:absolute;left:8px;top:6px;bottom:8px;width:2px;background:#E4EAE7}
+.tl-i{position:relative;padding-bottom:16px}
+.tl-i:last-child{padding-bottom:0}
+.tl-i::before{content:"";position:absolute;left:-26px;top:2px;width:18px;height:18px;border-radius:50%;
+  background:var(--em);border:3px solid #fff;box-shadow:0 0 0 2px #E4EAE7}
+.tl-i.open::before{background:#D9E2DE}
+.tl-i b{display:block;font-size:13px}
+.tl-i small{font-size:11px;color:var(--muted);display:block;margin-bottom:4px}
+.tl-i p{margin:0;font-size:12.5px;color:#42544E;line-height:1.55}
+
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:12px;font-weight:600;margin-bottom:6px}
+.fld input,.fld textarea,.fld select{width:100%;border:1px solid #DCE4E0;border-radius:10px;padding:10px 12px;
+  font-family:var(--sans);font-size:13px;background:#fff;color:var(--ink);outline:0;resize:none}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--em)}
+.fld .help{font-size:11px;color:var(--muted);margin-top:5px}
+.drop{border:1.5px dashed #CBD6D1;border-radius:12px;padding:22px;text-align:center;cursor:pointer;background:#FAFCFB}
+.drop:hover{border-color:var(--gold);background:#FFFDF8}
+.drop svg{width:24px;height:24px;color:var(--gold);margin-bottom:6px}
+.drop b{display:block;font-size:13px}
+.drop span{font-size:11.5px;color:var(--muted)}
+
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty b{display:block;font-size:14px;color:var(--ink);margin-bottom:5px}
+.empty span{font-size:12.5px}
+
+/* modal */
+.modal{position:absolute;inset:0;z-index:60;background:rgba(6,42,35,.5);display:none;align-items:center;justify-content:center;padding:24px}
+.modal.on{display:flex}
+.modal-box{background:#fff;border-radius:16px;width:460px;max-width:100%;overflow:hidden;animation:pop .22s ease}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal-h{padding:18px 20px 0}
+.modal-h b{font-family:var(--disp);font-size:17px;letter-spacing:-.02em}
+.modal-h p{margin:6px 0 0;font-size:12.5px;color:var(--muted);line-height:1.55}
+.modal-b{padding:16px 20px}
+.modal-f{padding:14px 20px;background:#F5F7F6;display:flex;gap:8px;justify-content:flex-end}
+
+/* toast (dipakai bersama) */
+.toast{position:absolute;left:50%;transform:translateX(-50%) translateY(14px);bottom:26px;z-index:80;
+  background:var(--ink);color:#fff;border-radius:12px;padding:12px 16px;font-size:12.5px;display:flex;
+  align-items:center;gap:9px;opacity:0;pointer-events:none;transition:.26s;max-width:90%}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.toast svg{width:15px;height:15px;color:var(--goldlt);flex:0 0 auto}
+
+/* ================= APLIKASI (PONSEL) ================= */
+.hero{background:linear-gradient(160deg,#0F4739,#0B3B33 50%,#08302A);color:#fff;padding:60px 20px 22px;border-radius:0 0 30px 30px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-70px;top:-90px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(232,199,126,.22),transparent 68%)}
+.hrow{display:flex;align-items:center;gap:12px;position:relative}
+.ava{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--goldlt),var(--gold));display:grid;place-items:center;font-weight:800;color:#33230A;font-size:15px;flex:0 0 auto}
+.hrow .who{flex:1;min-width:0}
+.hrow .who small{display:block;font-size:11.5px;color:#9CBBB1}
+.hrow .who b{font-size:16px}
+.ibtn{width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.1);border:0;display:grid;place-items:center;color:#fff;cursor:pointer;position:relative;flex:0 0 auto}
+.ibtn.dot::after{content:"";position:absolute;top:9px;right:9px;width:7px;height:7px;border-radius:50%;background:var(--goldlt);border:1.5px solid #0F4739}
+.cd{margin-top:20px;display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:92px;height:92px;flex:0 0 auto;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.cdnum{font-family:var(--disp);font-size:30px;font-weight:800;color:var(--goldlt);line-height:.9;letter-spacing:-.03em}
+.cdnum small{display:block;font-family:var(--sans);font-size:8.5px;letter-spacing:.18em;color:#8FB0A6;margin-top:4px;font-weight:600}
+.cdtxt .lbl{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:5px}
+.cdtxt h2{font-family:var(--disp);font-size:21px;line-height:1.2;margin:0 0 7px;font-weight:700;letter-spacing:-.02em}
+.cdtxt .clk{font-size:12.5px;color:#A9C6BC}
+.cdtxt .clk b{color:#fff}
+.streak{margin-top:18px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:13px 14px}
+.streak-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.streak-h b{font-size:13px}
+.streak-h span{font-size:11.5px;color:#9CBBB1}
+.stars{display:flex;gap:6px}
+.stars svg{width:17px;height:17px;opacity:.22}
+.stars svg.on{opacity:1;color:var(--goldlt)}
+.stars svg.nx{opacity:.5;color:#fff;animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.18);opacity:.75}}
+
+.sec{margin-top:24px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.sec-h h3{font-family:var(--disp);font-size:17px;font-weight:700;margin:0;letter-spacing:-.02em}
+.sec-h a{font-size:12.5px;color:var(--gold);font-weight:600;cursor:pointer}
+.cats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.cat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 8px 11px;text-align:center;cursor:pointer}
+.cat:active{transform:scale(.96)}
+.cat i{width:40px;height:40px;margin:0 auto 8px;border-radius:13px;background:var(--em);display:grid;place-items:center;color:var(--goldlt)}
+.cat i svg{width:21px;height:21px}
+.cat span{font-size:11px;font-weight:600;line-height:1.3;display:block}
+.rail{display:flex;gap:13px;overflow-x:auto;padding:2px 20px 6px;margin:0 -20px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.pc{flex:0 0 254px;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;cursor:pointer}
+.pc .th{height:110px;position:relative}
+.pc .th svg{position:absolute;bottom:0;left:0;width:100%;opacity:.28}
+.tag{position:absolute;top:10px;left:10px;background:rgba(6,42,35,.82);color:var(--goldlt);font-size:10px;font-weight:700;padding:5px 9px;border-radius:8px;display:flex;align-items:center;gap:5px}
+.tag svg{position:static!important;width:11px!important;height:11px!important;opacity:1!important}
+.pc .bd{padding:12px 13px 14px}
+.pc h4{font-size:14px;font-weight:700;line-height:1.35;margin:0 0 4px}
+.pc .org{font-size:11px;color:var(--muted);margin-bottom:11px}
+.meta{display:flex;justify-content:space-between;font-size:11.5px;margin-top:7px}
+.meta b{font-weight:800;color:var(--em)}
+.meta span{color:var(--muted)}
+.prow{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px;cursor:pointer;margin-bottom:11px}
+.prow .th{width:74px;height:74px;border-radius:12px;flex:0 0 auto;position:relative;overflow:hidden}
+.prow .th svg{position:absolute;bottom:-2px;left:0;width:100%;opacity:.3}
+.prow h4{font-size:13.5px;font-weight:700;margin:0 0 3px;line-height:1.35}
+.prow .org{font-size:10.5px;color:var(--muted);margin-bottom:9px}
+.feed{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.fi{display:flex;gap:11px;padding:13px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+.fi:last-child{border-bottom:0}
+.fi i{width:32px;height:32px;border-radius:10px;background:#E9F2EE;color:var(--ok);display:grid;place-items:center;flex:0 0 auto}
+.fi i svg{width:16px;height:16px}
+.fi p{margin:0;font-size:12.5px;line-height:1.5}
+.fi small{display:block;font-size:10.5px;color:var(--muted);margin-top:3px}
+.fi .see{font-size:11px;color:var(--gold);font-weight:700;align-self:center;cursor:pointer}
+.swr{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:11px;cursor:pointer}
+.swr i{width:36px;height:36px;border-radius:11px;background:#EFF6F2;display:grid;place-items:center;color:var(--em);flex:0 0 auto}
+.swr i svg{width:18px;height:18px}
+.swr .tx{flex:1}
+.swr b{font-size:13px;display:block}
+.swr small{font-size:11px;color:var(--muted);line-height:1.45;display:block;margin-top:2px}
+.sw{width:44px;height:26px;border-radius:14px;background:#D6DEDA;position:relative;flex:0 0 auto;transition:.22s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.22s;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.sw.on{background:var(--em)}
+.sw.on::after{transform:translateX(18px)}
+
+.navb{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:56px 20px 14px;background:var(--cream)}
+.navb h2{font-family:var(--disp);font-size:17px;margin:0;font-weight:700;letter-spacing:-.02em;flex:1}
+.bk{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex:0 0 auto}
+
+.cover{height:240px;position:relative;overflow:hidden}
+.cover .silh{position:absolute;bottom:0;left:0;width:100%;opacity:.3}
+.cover .fade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(4,21,15,.5),transparent 34%,rgba(247,243,234,0) 72%,var(--cream))}
+.cnav{position:absolute;top:52px;left:20px;right:20px;display:flex;justify-content:space-between;z-index:5}
+.cnav button{width:38px;height:38px;border-radius:12px;border:0;background:rgba(6,42,35,.55);color:#fff;display:grid;place-items:center;cursor:pointer}
+.dbody{padding:0 20px;margin-top:-16px;position:relative}
+.vf{display:inline-flex;align-items:center;gap:6px;background:#E9F2EE;color:var(--ok);font-size:11px;font-weight:700;padding:6px 10px;border-radius:9px;margin-bottom:10px}
+.vf svg{width:13px;height:13px}
+.dbody h1{font-family:var(--disp);font-size:24px;line-height:1.22;margin:0 0 10px;font-weight:700;letter-spacing:-.025em}
+.orgl{display:flex;align-items:center;gap:9px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.orgl i{width:34px;height:34px;border-radius:10px;background:var(--em);display:grid;place-items:center;color:var(--goldlt)}
+.orgl i svg{width:17px;height:17px}
+.orgl b{font-size:13px;display:block}
+.orgl small{font-size:10.5px;color:var(--muted)}
+.raised{font-family:var(--disp);font-size:26px;font-weight:800;letter-spacing:-.03em;color:var(--em)}
+.rsub{font-size:12px;color:var(--muted);margin:2px 0 11px}
+.stat3{display:flex;gap:9px;margin-top:14px}
+.st{flex:1;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px 12px}
+.st b{display:block;font-size:16px;font-weight:800;color:var(--em)}
+.st span{font-size:10.5px;color:var(--muted)}
+.segs{display:flex;gap:6px;background:var(--sand);border-radius:13px;padding:4px;margin:20px 0 16px}
+.seg{flex:1;border:0;background:none;padding:9px 4px;border-radius:10px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+.seg.on{background:#fff;color:var(--em);font-weight:700}
+.tp{display:none}
+.tp.on{display:block;animation:fade .26s ease}
+.prose p{font-size:13.5px;line-height:1.7;color:#33453F;margin:0 0 13px}
+.pull{border-left:3px solid var(--gold);padding-left:14px;font-family:var(--disp);font-size:15px;line-height:1.5;color:var(--em);margin:16px 0;font-weight:500}
+.trace{position:relative;padding-left:30px}
+.trace::before{content:"";position:absolute;left:11px;top:8px;bottom:14px;width:2px;background:var(--sand)}
+.ts{position:relative;padding-bottom:20px}
+.ts .pin{position:absolute;left:-30px;top:1px;width:24px;height:24px;border-radius:50%;background:var(--cream);border:2px solid var(--sand);display:grid;place-items:center;color:var(--muted)}
+.ts .pin svg{width:12px;height:12px}
+.ts.done .pin{background:var(--em);border-color:var(--em);color:var(--goldlt)}
+.ts b{font-size:13.5px;display:block;margin-bottom:3px}
+.ts small{font-size:11px;color:var(--muted);display:block;margin-bottom:7px}
+.ts p{font-size:12.5px;line-height:1.6;color:#4A5C56;margin:0}
+.proof{display:inline-flex;align-items:center;gap:6px;margin-top:9px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-size:11.5px;font-weight:600;color:var(--em);cursor:pointer}
+.proof svg{width:13px;height:13px;color:var(--gold)}
+.dn{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+.dn:last-child{border-bottom:0}
+.dn .av{width:36px;height:36px;border-radius:11px;background:var(--sand);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--em);flex:0 0 auto}
+.dn .in{flex:1;min-width:0}
+.dn b{font-size:13px;display:block}
+.dn small{font-size:11px;color:var(--muted)}
+.dn .amt{font-size:13px;font-weight:800;color:var(--em)}
+.doa{font-size:12px;color:#4A5C56;font-style:italic;margin-top:4px;line-height:1.5}
+.cta{position:absolute;left:0;right:0;bottom:0;z-index:26;padding:14px 20px 26px;
+  background:linear-gradient(to top,var(--cream) 62%,rgba(247,243,234,0));display:flex;gap:11px;align-items:center}
+.cta .save{width:50px;height:50px;flex:0 0 auto;border-radius:15px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--em)}
+.mbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:15px;padding:15px 18px;
+  font-size:15px;font-weight:700;cursor:pointer;letter-spacing:-.01em}
+.mbtn:active{transform:scale(.98)}
+.m-gold{background:linear-gradient(135deg,#E7C67E,#C8963E 62%,#A9762A);color:#2A1B03}
+.m-gh{background:transparent;color:var(--em);border:1.4px solid var(--line)}
+
+.abox{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px}
+.ain{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--em);padding-bottom:11px}
+.ain span{font-size:17px;font-weight:700;color:var(--muted)}
+.ain input{border:0;outline:0;font-family:var(--disp);font-size:32px;font-weight:800;letter-spacing:-.03em;color:var(--em);width:100%;background:none}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.chip{border:1.4px solid var(--line);background:#fff;border-radius:12px;padding:11px 4px;font-family:var(--sans);font-size:13px;font-weight:700;color:var(--ink);cursor:pointer}
+.chip.on{border-color:var(--em);background:var(--em);color:#fff}
+.fldm{margin-top:14px}
+.fldm label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}
+.fldm textarea,.fldm input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-family:var(--sans);font-size:13.5px;background:#fff;outline:0;resize:none;color:var(--ink)}
+.pay{display:flex;align-items:center;gap:12px;background:#fff;border:1.4px solid var(--line);border-radius:16px;padding:14px;margin-bottom:9px;cursor:pointer}
+.pay.on{border-color:var(--em);background:#F4FAF7}
+.pay .pi{width:44px;height:32px;border-radius:8px;background:var(--sand);display:grid;place-items:center;font-size:9px;font-weight:800;color:var(--em);flex:0 0 auto}
+.pay .in{flex:1}
+.pay b{font-size:13.5px;display:block}
+.pay small{font-size:11px;color:var(--muted)}
+.radio{width:21px;height:21px;border-radius:50%;border:1.8px solid var(--line);flex:0 0 auto;display:grid;place-items:center}
+.pay.on .radio{border-color:var(--em)}
+.pay.on .radio::after{content:"";width:11px;height:11px;border-radius:50%;background:var(--em)}
+.summ{background:var(--em);color:#fff;border-radius:22px;padding:16px 17px;margin-top:16px}
+.sl{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;color:#B9D2C9}
+.sl b{color:#fff;font-weight:600}
+.sl.tot{border-top:1px solid rgba(255,255,255,.16);margin-top:6px;padding-top:12px;font-size:14px}
+.sl.tot b{font-family:var(--disp);font-size:20px;font-weight:800;color:var(--goldlt)}
+
+#s-success{background:linear-gradient(170deg,#0B3B33,#061F1A);color:#fff}
+.succ{padding:92px 26px 0;text-align:center}
+.sstar{width:104px;height:104px;margin:0 auto 22px;position:relative;display:grid;place-items:center}
+.sstar svg.big{width:104px;height:104px;color:var(--goldlt);animation:popp .6s cubic-bezier(.2,1.5,.4,1) both}
+.sstar .chk{position:absolute;color:#0B3B33}
+.sstar .chk svg{width:34px;height:34px}
+@keyframes popp{from{opacity:0;transform:scale(.4) rotate(-25deg)}to{opacity:1;transform:none}}
+.succ h1{font-family:var(--disp);font-size:26px;margin:0 0 9px;font-weight:700}
+.succ .ar{font-size:15px;color:var(--goldlt);margin-bottom:13px}
+.succ p{font-size:13.5px;line-height:1.65;color:#A9C6BC;margin:0 auto;max-width:270px}
+.scard{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:16px;margin:24px 20px 0;text-align:left}
+
+.ihero{background:linear-gradient(160deg,#0F4739,#08302A);color:#fff;padding:60px 20px 24px;border-radius:0 0 30px 30px}
+.itot{font-family:var(--disp);font-size:36px;font-weight:800;letter-spacing:-.035em;color:var(--goldlt);line-height:1;margin:10px 0 6px}
+.imrow{display:flex;gap:9px;margin-top:18px}
+.imc{flex:1;background:rgba(255,255,255,.08);border-radius:14px;padding:11px 12px}
+.imc b{display:block;font-size:18px;font-weight:800}
+.imc span{font-size:10.5px;color:#9CBBB1}
+.brk{margin-bottom:13px}
+.brk-t{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px}
+.brk-t b{font-weight:600}
+.brk-t span{color:var(--muted)}
+.hist{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.hr{display:flex;gap:11px;padding:13px 14px;border-bottom:1px solid var(--line);align-items:center}
+.hr:last-child{border-bottom:0}
+.hr i{width:36px;height:36px;border-radius:11px;background:#EFF6F2;display:grid;place-items:center;color:var(--em);flex:0 0 auto}
+.hr i svg{width:17px;height:17px}
+.hr .in{flex:1;min-width:0}
+.hr b{font-size:13px;display:block}
+.hr small{font-size:10.5px;color:var(--muted)}
+.hr .amt{font-size:13px;font-weight:800;color:var(--em)}
+.bok{font-size:9.5px;font-weight:700;color:var(--ok);background:#E9F2EE;padding:3px 7px;border-radius:6px;display:inline-block;margin-top:4px}
+.menu{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.mr{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);cursor:pointer}
+.mr:last-child{border-bottom:0}
+.mr i{width:34px;height:34px;border-radius:11px;background:#EFF6F2;display:grid;place-items:center;color:var(--em);flex:0 0 auto}
+.mr i svg{width:17px;height:17px}
+.mr .in{flex:1}
+.mr b{font-size:13.5px;display:block}
+.mr small{font-size:11px;color:var(--muted)}
+.mpill{font-size:10px;font-weight:700;padding:4px 8px;border-radius:7px;background:#FBF3E3;color:#8A6417}
+
+/* ibadah */
+.prayer-hero{background:linear-gradient(160deg,#0F4739,#08302A);color:#fff;padding:60px 20px 22px;border-radius:0 0 30px 30px}
+.pr-next{display:flex;align-items:flex-end;gap:14px;margin-top:14px}
+.pr-next .big{font-family:var(--disp);font-size:38px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.pr-next .lb{font-size:12px;color:#9CBBB1;padding-bottom:5px}
+.pl{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.pl:last-child{border-bottom:0}
+.pl .nm{flex:1;font-weight:500}
+.pl .tm{font-weight:700;color:var(--em)}
+.pl.now{color:var(--em)}
+.pl.now .nm{font-weight:700}
+.pl.now .tm{color:var(--gold)}
+.pl .bell{width:26px;height:26px;border-radius:8px;background:#EFF6F2;display:grid;place-items:center;color:var(--em);margin-left:10px;cursor:pointer}
+.pl .bell svg{width:13px;height:13px}
+.pl .bell.off{background:#F2F2F2;color:#B8C2BE}
+.ibgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.ib{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;cursor:pointer}
+.ib i{width:34px;height:34px;border-radius:11px;background:var(--em);display:grid;place-items:center;color:var(--goldlt);margin-bottom:9px}
+.ib i svg{width:17px;height:17px}
+.ib b{font-size:12.5px;display:block}
+.ib small{font-size:10.5px;color:var(--muted);line-height:1.4;display:block;margin-top:2px}
+.surah{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.surah:last-child{border-bottom:0}
+.surah .no{width:30px;height:30px;border-radius:9px;background:var(--sand);display:grid;place-items:center;font-size:11.5px;font-weight:700;color:var(--em);flex:0 0 auto}
+.surah .in{flex:1}
+.surah b{font-size:13px;display:block}
+.surah small{font-size:11px;color:var(--muted)}
+.surah .ar{font-size:15px;color:var(--em);font-weight:600}
+.ayat{padding:16px 0;border-bottom:1px solid var(--line)}
+.ayat .ar{font-size:22px;line-height:2;text-align:right;color:var(--ink);margin-bottom:10px;direction:rtl}
+.ayat .tr{font-size:12.5px;color:#4A5C56;line-height:1.65}
+.ayat .no{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--sand);font-size:10.5px;font-weight:700;color:var(--em);margin-bottom:8px}
+.qcompass{width:190px;height:190px;margin:20px auto;border-radius:50%;border:2px solid var(--line);background:#fff;position:relative;display:grid;place-items:center}
+.qneedle{width:5px;height:78px;background:linear-gradient(180deg,var(--gold) 50%,#D6DEDA 50%);border-radius:3px;transform-origin:center;animation:sway 4s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+.qmark{position:absolute;font-size:11px;font-weight:700;color:var(--muted)}
+.zres{background:var(--em);color:#fff;border-radius:22px;padding:18px;margin-top:16px}
+.zres .lb{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.zres .big{font-family:var(--disp);font-size:30px;font-weight:800;letter-spacing:-.03em;color:var(--goldlt);margin:6px 0 4px}
+.zres small{font-size:12px;color:#A9C6BC;line-height:1.5;display:block}
+
+.tabbar{position:absolute;left:0;right:0;bottom:0;height:82px;z-index:25;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(16px);border-top:1px solid var(--line);display:flex;align-items:flex-start;padding:9px 6px 0;transition:.3s}
+.tabbar.hide{transform:translateY(100%)}
+.tb{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;color:#9AA8A3;cursor:pointer;padding:5px 0}
+.tb svg{width:21px;height:21px}
+.tb span{font-size:9.5px;font-weight:600}
+.tb.on{color:var(--em)}
+.fab{flex:0 0 62px;height:62px;margin-top:-22px;border-radius:22px;border:0;cursor:pointer;
+  background:linear-gradient(140deg,#E7C67E,#C8963E 60%,#A9762A);color:#2A1B03;display:grid;place-items:center;
+  box-shadow:0 12px 24px -8px rgba(200,150,62,.85)}
+.fab svg{width:27px;height:27px}
+
+@media (max-width:1240px){
+  .win{width:100%}
+  .win-body{height:640px}
+}
+@media (max-width:820px){
+  .stage{padding:20px 12px 50px}
+  .device{width:min(390px,94vw);height:min(844px,84vh)}
+  .win-body{flex-direction:column;height:auto}
+  .side{width:100%;display:flex;flex-wrap:wrap;gap:6px;padding:12px}
+  .side-brand,.side-lbl,.side-foot{display:none}
+  .snav{width:auto;padding:8px 12px}
+  .main{padding:16px;max-height:520px}
+  .kpis,.grid2,.grid3{grid-template-columns:1fr 1fr}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<!-- ================= TOPBAR ================= -->
+<header class="topbar">
+  <div class="brandmark">
+    <svg viewBox="0 0 48 48" fill="none"><path d="M24 3l4.6 3.9 6-.6 1.5 5.9 5.4 2.8-1.6 5.9 3.5 4.9-3.5 4.9 1.6 5.9-5.4 2.8-1.5 5.9-6-.6L24 45l-4.6-3.9-6 .6-1.5-5.9-5.4-2.8 1.6-5.9L4.6 22l3.5-4.9-1.6-5.9 5.4-2.8 1.5-5.9 6 .6L24 3z" stroke="#C8963E" stroke-width="1.6"/><path d="M24 19.5c1.4-2.6 5.4-2.2 5.4 1 0 2.6-3.4 5-5.4 6.4-2-1.4-5.4-3.8-5.4-6.4 0-3.2 4-3.6 5.4-1z" fill="#E7C67E"/><path d="M15 24c0 5 4 9 9 9s9-4 9-9" stroke="#3FA88C" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <div><b>JUSI</b><span>Prototipe</span></div>
+  </div>
+  <nav class="prodtabs">
+    <button class="prodtab on" data-prod="app">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="6" y="2.5" width="12" height="19" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Aplikasi Donatur</button>
+    <button class="prodtab" data-prod="lem">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Dashboard Lembaga</button>
+    <button class="prodtab" data-prod="adm">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6l8-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Panel Admin</button>
+  </nav>
+  <div class="hint">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg>
+    Semua tombol bisa diklik
+  </div>
+</header>
+
+<!-- ================================================================= -->
+<!-- =============== 1. APLIKASI DONATUR (PONSEL) ==================== -->
+<!-- ================================================================= -->
+<section class="stage on" id="stage-app">
+  <div class="stage-head">
+    <h1>Aplikasi Donatur</h1>
+    <p>Muka untuk masyarakat umum: menemukan program, bersedekah dalam tiga ketukan, menelusuri ke mana dananya pergi, dan menjalankan ibadah harian dalam satu aplikasi.</p>
+  </div>
+  <div class="stage-inner">
+  <div class="device">
+    <div class="notch"></div>
+    <div class="viewport">
+      <div class="statusbar light" id="sbar">
+        <span id="clock">09.41</span>
+        <div style="display:flex;gap:5px;align-items:center">
+          <span style="display:flex;gap:2px;align-items:flex-end"><i style="display:block;width:3px;height:5px;background:currentColor;border-radius:1px"></i><i style="display:block;width:3px;height:7px;background:currentColor;border-radius:1px"></i><i style="display:block;width:3px;height:9px;background:currentColor;border-radius:1px"></i><i style="display:block;width:3px;height:11px;background:currentColor;border-radius:1px"></i></span>
+          <span class="batt"></span>
+        </div>
+      </div>
+      <svg width="0" height="0"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E7C67E"/><stop offset="1" stop-color="#C8963E"/></linearGradient></defs></svg>
+
+      <!-- ---------- BERANDA ---------- -->
+      <section class="screen act" id="s-home">
+        <div class="hero">
+          <div class="hrow">
+            <div class="ava">RH</div>
+            <div class="who"><small>Assalamualaikum</small><b>Rizal Hakim</b></div>
+            <button class="ibtn dot" onclick="go('notif')">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="cd">
+            <div class="ring">
+              <svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5"/><circle id="cdProg" cx="46" cy="46" r="40" fill="none" stroke="url(#gg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="80"/></svg>
+              <div class="cdnum"><span id="cdDays">3</span><small>HARI</small></div>
+            </div>
+            <div class="cdtxt">
+              <div class="lbl">Menuju Jumat</div>
+              <h2>Siapkan satu<br>kebaikan pekan ini</h2>
+              <div class="clk" id="cdClock">tersisa <b>3 hari</b></div>
+            </div>
+          </div>
+          <div class="streak">
+            <div class="streak-h"><b>Rantai Jumat</b><span><span id="stN">12</span> pekan berturut-turut</span></div>
+            <div class="stars" id="stars"></div>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="sec">
+            <div class="sec-h"><h3>Salurkan kebaikan</h3><a onclick="go('explore')">Semua</a></div>
+            <div class="cats">
+              <div class="cat" onclick="openCat('Infaq Subuh')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M4.9 6.5l2.1 2.1M2 15h3M19 15h3M17 8.6l2.1-2.1M17 15a5 5 0 0 0-10 0M2 19h20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i><span>Infaq Subuh</span></div>
+              <div class="cat" onclick="openCat('Jumatan')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 2c1.8 1.6 2.6 3 2.6 4.4 0 1.6-2.6 2.8-2.6 2.8S9.4 8 9.4 6.4C9.4 5 10.2 3.6 12 2zM4 21v-7c0-2.6 3.6-4.6 8-4.6s8 2 8 4.6v7M4 21h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span>Jumatan</span></div>
+              <div class="cat" onclick="openCat('Sedekah')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 8.5c1.6-3 6-2.4 6 1.1 0 2.9-3.9 5.6-6 7.1-2.1-1.5-6-4.2-6-7.1 0-3.5 4.4-4.1 6-1.1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></i><span>Sedekah</span></div>
+              <div class="cat" onclick="openCat('Pendidikan')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 5.5C6 4 9 4 12 6c3-2 6-2 9-.5v13c-3-1.5-6-1.5-9 .5-3-2-6-2-9-.5v-13zM12 6v13" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></i><span>Pendidikan</span></div>
+              <div class="cat" onclick="openCat('Lembaga')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9.5 10v9M14.5 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></i><span>Lembaga</span></div>
+              <div class="cat" onclick="openCat('Amal Jariah')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c0-6 3-10 8-11-1 6-4 9-8 11zM12 21c0-5-2.5-8.5-7-9.5.8 5 3.5 8 7 9.5zM12 21v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span>Amal Jariah</span></div>
+            </div>
+          </div>
+          <div class="sec"><div class="sec-h"><h3>Pilihan Jumat ini</h3><a onclick="go('explore')">Lihat 42</a></div></div>
+        </div>
+        <div class="rail">
+          <article class="pc" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#12564A,#0B3B33)">
+              <span class="tag"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/></svg>Terverifikasi</span>
+              <svg viewBox="0 0 254 70" fill="#E7C67E" preserveAspectRatio="none"><path d="M0 70V46h18V34h8v12h30V26c0-8 8-13 8-13s8 5 8 13v20h26V38h9v8h28V20c0-11 10-17 10-17s10 6 10 17v26h30V32h10v14h24V22c0-8 7-12 7-12s7 4 7 12v24h21v24H0z"/></svg>
+            </div>
+            <div class="bd"><h4>Renovasi atap Masjid Al-Ikhlas</h4><div class="org">Yayasan Baitul Amanah · Bogor</div>
+              <div class="bar sm"><i style="width:68%"></i></div>
+              <div class="meta"><b>Rp34,2 jt</b><span>dari Rp50 jt</span></div></div>
+          </article>
+          <article class="pc" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#8A6417,#C8963E)">
+              <span class="tag">Infaq Subuh</span>
+              <svg viewBox="0 0 254 70" fill="#3D2A05" preserveAspectRatio="none"><path d="M0 70V52h30V40h12v12h34V34c0-7 7-11 7-11s7 4 7 11v18h28V44h10v8h30V28c0-9 9-14 9-14s9 5 9 14v24h28V40h11v12h39v18H0z"/></svg>
+            </div>
+            <div class="bd"><h4>800 paket sahur untuk pemulung</h4><div class="org">Komunitas Subuh Berbagi · Jakarta</div>
+              <div class="bar sm"><i style="width:41%"></i></div>
+              <div class="meta"><b>Rp8,2 jt</b><span>dari Rp20 jt</span></div></div>
+          </article>
+        </div>
+        <div class="pad">
+          <div class="sec">
+            <div class="sec-h"><h3>Disalurkan hari ini</h3></div>
+            <div class="feed">
+              <div class="fi"><i><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+                <div style="flex:1"><p><b>Rp12.400.000</b> dibelanjakan untuk rangka atap Masjid Al-Ikhlas</p><small>Hari ini 10.24 · 218 donatur</small></div>
+                <span class="see" onclick="event.stopPropagation();go('detail');seg2('jejak')">Bukti</span></div>
+              <div class="fi"><i><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+                <div style="flex:1"><p><b>640 paket sahur</b> dibagikan di Kampung Bandan</p><small>Kemarin 04.10 · 96 donatur</small></div>
+                <span class="see" onclick="toast('Foto dan daftar penerima dibuka')">Bukti</span></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="swr" onclick="go('routine')">
+              <i><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+              <div class="tx"><b>Aktifkan Jumat Rutin</b><small>Sisihkan nominal tetap tiap Jumat, otomatis</small></div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="color:#B6C2BD"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- JELAJAH ---------- -->
+      <section class="screen" id="s-explore">
+        <div class="navb"><h2>Jelajah program</h2></div>
+        <div class="pad">
+          <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:13px">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="color:var(--muted)"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="text" placeholder="Cari masjid, yayasan, atau program" style="border:0;outline:0;background:none;font-family:var(--sans);font-size:13.5px;width:100%">
+          </div>
+        </div>
+        <div style="display:flex;gap:7px;overflow-x:auto;padding:0 20px 2px;margin-bottom:16px;scrollbar-width:none" id="filters">
+          <button class="chip on" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Semua</button>
+          <button class="chip" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Infaq Subuh</button>
+          <button class="chip" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Jumatan</button>
+          <button class="chip" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Sedekah</button>
+          <button class="chip" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Pendidikan</button>
+          <button class="chip" style="flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:11px">Amal Jariah</button>
+        </div>
+        <div class="pad" id="plist">
+          <article class="prow" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#12564A,#0B3B33)"></div>
+            <div style="flex:1"><h4>Renovasi atap Masjid Al-Ikhlas</h4><div class="org">Yayasan Baitul Amanah · 18 hari lagi</div>
+              <div class="bar sm"><i style="width:68%"></i></div><div class="meta"><b>Rp34,2 jt</b><span>68% dari Rp50 jt</span></div></div>
+          </article>
+          <article class="prow" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#8A6417,#C8963E)"></div>
+            <div style="flex:1"><h4>800 paket sahur untuk pemulung</h4><div class="org">Komunitas Subuh Berbagi · 6 hari lagi</div>
+              <div class="bar sm"><i style="width:41%"></i></div><div class="meta"><b>Rp8,2 jt</b><span>41% dari Rp20 jt</span></div></div>
+          </article>
+          <article class="prow" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#0F4739,#1C6B53)"></div>
+            <div style="flex:1"><h4>Sumur bor untuk 3 dusun</h4><div class="org">Yayasan Air Untuk Negeri · 24 hari lagi</div>
+              <div class="bar sm"><i style="width:86%"></i></div><div class="meta"><b>Rp64,5 jt</b><span>86% dari Rp75 jt</span></div></div>
+          </article>
+          <article class="prow" onclick="go('detail')">
+            <div class="th" style="background:linear-gradient(150deg,#124A40,#0B3B33)"></div>
+            <div style="flex:1"><h4>Beasiswa 40 santri penghafal Quran</h4><div class="org">Pesantren Nurul Fikri · 31 hari lagi</div>
+              <div class="bar sm"><i style="width:53%"></i></div><div class="meta"><b>Rp21,2 jt</b><span>53% dari Rp40 jt</span></div></div>
+          </article>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- DETAIL ---------- -->
+      <section class="screen" id="s-detail">
+        <div class="cover" style="background:linear-gradient(150deg,#12564A,#0B3B33 70%)">
+          <svg class="silh" viewBox="0 0 390 130" fill="#E7C67E" preserveAspectRatio="none"><path d="M0 130V88h28V70h12v18h36V50c0-13 12-20 12-20s12 7 12 20v38h40V64h14v24h44V38c0-16 14-25 14-25s14 9 14 25v50h42V60h14v28h38V44c0-11 9-17 9-17s9 6 9 17v44h32v42H0z"/></svg>
+          <div class="fade"></div>
+          <div class="cnav">
+            <button onclick="back()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button onclick="toast('Tautan program disalin')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M12 3v13M8 7l4-4 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+        <div class="dbody">
+          <span class="vf"><svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4-4.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.9"/></svg>Lembaga terverifikasi</span>
+          <h1>Renovasi atap Masjid Al-Ikhlas</h1>
+          <div class="orgl">
+            <i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+            <div style="flex:1"><b>Yayasan Baitul Amanah</b><small>Bogor · 34 program tersalurkan</small></div>
+            <button class="mbtn m-gh" style="width:auto;padding:9px 12px;font-size:12.5px;border-radius:11px" onclick="toast('Profil lembaga dibuka')">Profil</button>
+          </div>
+          <div class="raised">Rp34.200.000</div>
+          <div class="rsub">terkumpul dari target <b>Rp50.000.000</b></div>
+          <div class="bar"><i style="width:68%"></i></div>
+          <div class="stat3">
+            <div class="st"><b>218</b><span>donatur</span></div>
+            <div class="st"><b>18</b><span>hari lagi</span></div>
+            <div class="st"><b>3×</b><span>laporan terbit</span></div>
+          </div>
+          <div class="segs">
+            <button class="seg on" onclick="seg2('cerita',this)">Cerita</button>
+            <button class="seg" onclick="seg2('jejak',this)">Jejak dana</button>
+            <button class="seg" onclick="seg2('donatur',this)">Donatur</button>
+          </div>
+          <div class="tp on prose" id="tp-cerita">
+            <p>Atap Masjid Al-Ikhlas di Kampung Cikaret bocor di sembilan titik. Saat hujan, jamaah salat sambil menghindari genangan, dan karpet shaf depan harus digulung setiap sore.</p>
+            <p>Pengurus sudah menambal seadanya selama dua tahun. Rangka kayunya lapuk dan perlu diganti menyeluruh — <b>bukan ditambal lagi</b>.</p>
+            <div class="pull">"Kami hanya ingin jamaah bisa sujud dengan tenang, tanpa memikirkan air yang menetes."<br><span style="font-size:12px;font-family:var(--sans);color:var(--muted)">— Ustaz Munir, takmir masjid</span></div>
+            <p><b>Rincian kebutuhan</b><br>Rangka baja ringan Rp28 jt · Genteng dan talang Rp14 jt · Upah tukang 12 hari Rp6 jt · Operasional lembaga Rp2 jt.</p>
+          </div>
+          <div class="tp" id="tp-jejak">
+            <p style="font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.6">Setiap rupiah punya jejak. Ikuti dari terkumpul sampai bukti serah terima.</p>
+            <div class="trace">
+              <div class="ts done"><div class="pin"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <b>Rp12.400.000 dibelanjakan</b><small>18 Agustus 2026 · Tahap 2</small>
+                <p>Rangka baja ringan 96 batang di UD Sinar Jaya. Faktur dan foto barang datang sudah diunggah.</p>
+                <span class="proof" onclick="toast('Faktur dan 6 foto dibuka')"><svg viewBox="0 0 24 24" fill="none"><path d="M14 3v5h5M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>Lihat faktur dan 6 foto</span></div>
+              <div class="ts done"><div class="pin"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <b>Rp9.000.000 dibelanjakan</b><small>4 Agustus 2026 · Tahap 1</small>
+                <p>Pembongkaran atap lama dan penopang sementara oleh 6 tukang warga sekitar selama 4 hari.</p></div>
+              <div class="ts done"><div class="pin"><svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
+                <b>Rp34.200.000 terkumpul</b><small>Sejak 12 Juli 2026 · 218 donatur</small>
+                <p>Dana ditahan di rekening penampungan atas nama yayasan, dicairkan bertahap sesuai kebutuhan pekerjaan.</p></div>
+              <div class="ts"><div class="pin"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2.4"/></svg></div>
+                <b>Serah terima dan laporan akhir</b><small>Estimasi 12 September 2026</small>
+                <p>Laporan penutup beserta foto atap terpasang dikirim ke semua donatur lewat notifikasi.</p></div>
+            </div>
+          </div>
+          <div class="tp" id="tp-donatur">
+            <div class="dn"><div class="av">H</div><div class="in"><b>Hamba Allah</b><small>2 jam lalu</small><div class="doa">"Semoga jadi pemberat timbangan amal orang tua saya."</div></div><span class="amt">Rp500rb</span></div>
+            <div class="dn"><div class="av">SW</div><div class="in"><b>Siti Wulandari</b><small>5 jam lalu · Jumat Rutin</small><div class="doa">"Sedikit, semoga tetap bermanfaat."</div></div><span class="amt">Rp50rb</span></div>
+            <div class="dn"><div class="av">A</div><div class="in"><b>Anonim</b><small>Kemarin</small></div><span class="amt">Rp1 jt</span></div>
+            <div class="dn"><div class="av">BP</div><div class="in"><b>Budi Prasetyo</b><small>Kemarin · Jumat Rutin</small><div class="doa">"Titip doa untuk kesembuhan ibu saya."</div></div><span class="amt">Rp100rb</span></div>
+          </div>
+          <div style="height:110px"></div>
+        </div>
+        <div class="cta">
+          <button class="save" onclick="toast('Program disimpan')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 8.5c1.7-3.2 6.5-2.6 6.5 1.2 0 3.1-4.2 6-6.5 7.6-2.3-1.6-6.5-4.5-6.5-7.6 0-3.8 4.8-4.4 6.5-1.2z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
+          <button class="mbtn m-gold" onclick="go('amount')">Sedekah sekarang</button>
+        </div>
+      </section>
+
+      <!-- ---------- NOMINAL ---------- -->
+      <section class="screen" id="s-amount">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Nominal sedekah</h2></div>
+        <div class="pad">
+          <div style="display:flex;gap:11px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:11px;margin-bottom:14px">
+            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(150deg,#12564A,#0B3B33);flex:0 0 auto"></div>
+            <div style="flex:1"><b style="font-size:13px;display:block;line-height:1.35">Renovasi atap Masjid Al-Ikhlas</b><small style="font-size:11px;color:var(--muted)">Yayasan Baitul Amanah</small></div>
+          </div>
+          <div class="abox">
+            <div class="ain"><span>Rp</span><input type="text" id="amt" value="50.000" inputmode="numeric"></div>
+            <div class="chips" id="chips">
+              <button class="chip" data-v="10.000">10rb</button>
+              <button class="chip" data-v="25.000">25rb</button>
+              <button class="chip on" data-v="50.000">50rb</button>
+              <button class="chip" data-v="100.000">100rb</button>
+              <button class="chip" data-v="250.000">250rb</button>
+              <button class="chip" data-v="500.000">500rb</button>
+            </div>
+          </div>
+          <div class="swr" onclick="tog(this)"><i><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+            <div class="tx"><b>Ulangi tiap Jumat</b><small>Nominal ini otomatis tersalurkan setiap Jumat pagi</small></div><div class="sw"></div></div>
+          <div class="swr" onclick="tog(this)"><i><svg viewBox="0 0 24 24" fill="none"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/></svg></i>
+            <div class="tx"><b>Sembunyikan nama saya</b><small>Ditampilkan sebagai "Hamba Allah"</small></div><div class="sw"></div></div>
+          <div class="fldm"><label>Doa atau pesan <span style="color:var(--muted);font-weight:400">— opsional</span></label>
+            <textarea rows="3" placeholder="Tulis doa yang ingin kamu titipkan…"></textarea></div>
+          <div class="fldm"><label>Tambahan untuk operasional JUSI</label>
+            <div class="chips" style="grid-template-columns:repeat(4,1fr)" id="tips">
+              <button class="chip" data-t="0">Tidak</button>
+              <button class="chip on" data-t="2.000">Rp2rb</button>
+              <button class="chip" data-t="5.000">Rp5rb</button>
+              <button class="chip" data-t="10.000">Rp10rb</button>
+            </div>
+            <p style="font-size:11px;color:var(--muted);line-height:1.55;margin:9px 0 0">100% sedekahmu sampai ke program. Bagian ini yang menjaga JUSI tetap gratis untuk lembaga kecil.</p>
+          </div>
+          <div style="height:110px"></div>
+        </div>
+        <div class="cta"><button class="mbtn m-gold" onclick="go('pay')">Lanjut ke pembayaran</button></div>
+      </section>
+
+      <!-- ---------- PEMBAYARAN ---------- -->
+      <section class="screen" id="s-pay">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Pembayaran</h2></div>
+        <div class="pad">
+          <div class="pay on" onclick="pick(this)"><div class="pi" style="background:var(--em);color:var(--goldlt)">QRIS</div><div class="in"><b>QRIS</b><small>Semua bank dan e-wallet · langsung terkonfirmasi</small></div><div class="radio"></div></div>
+          <div class="pay" onclick="pick(this)"><div class="pi">GOPAY</div><div class="in"><b>GoPay</b><small>Saldo Rp312.500</small></div><div class="radio"></div></div>
+          <div class="pay" onclick="pick(this)"><div class="pi">DANA</div><div class="in"><b>DANA</b><small>Terhubung · •••• 4471</small></div><div class="radio"></div></div>
+          <div class="pay" onclick="pick(this)"><div class="pi">VA</div><div class="in"><b>Transfer bank</b><small>BSI, Mandiri, BCA, BNI</small></div><div class="radio"></div></div>
+          <div class="summ">
+            <div class="sl"><span>Sedekah</span><b id="sumAmt">Rp50.000</b></div>
+            <div class="sl"><span>Operasional JUSI</span><b id="sumTip">Rp2.000</b></div>
+            <div class="sl"><span>Biaya transaksi</span><b style="color:#7FD4B4">Gratis</b></div>
+            <div class="sl tot"><span>Total bayar</span><b id="sumTot">Rp52.000</b></div>
+          </div>
+          <div style="display:flex;gap:9px;align-items:flex-start;margin-top:16px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" style="color:var(--ok);flex:0 0 auto;margin-top:1px"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6l8-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <p style="font-size:11.5px;color:var(--muted);line-height:1.6;margin:0">Dana masuk ke rekening penampungan berizin, bukan rekening pribadi. Penyaluran dilaporkan maksimal 14 hari setelah program ditutup.</p>
+          </div>
+          <div style="height:110px"></div>
+        </div>
+        <div class="cta"><button class="mbtn m-gold" id="payBtn" onclick="pay()">Bayar Rp52.000</button></div>
+      </section>
+
+      <!-- ---------- SUKSES ---------- -->
+      <section class="screen" id="s-success">
+        <div class="succ">
+          <div class="sstar">
+            <svg class="big" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg>
+            <span class="chk"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+          <h1>Sedekah tersalurkan</h1>
+          <div class="ar">جَزَاكَ اللهُ خَيْرًا</div>
+          <p id="succTxt">Rp52.000 sudah masuk ke program Renovasi atap Masjid Al-Ikhlas.</p>
+        </div>
+        <div class="scard">
+          <div class="sl"><span>Nomor transaksi</span><b>JUSI-8F42K9</b></div>
+          <div class="sl"><span>Metode</span><b id="succPay">QRIS</b></div>
+          <div class="sl tot"><span>Rantai Jumat</span><b>13 pekan</b></div>
+        </div>
+        <div style="padding:22px 20px 40px;display:flex;flex-direction:column;gap:9px">
+          <button class="mbtn m-gold" onclick="go('impact')">Lihat jejak kebaikan saya</button>
+          <button class="mbtn" style="background:rgba(255,255,255,.1);color:#fff" onclick="toast('Kartu ucapan siap dibagikan')">Bagikan dan ajak yang lain</button>
+          <button class="mbtn" style="background:none;color:#9CBBB1;font-size:13px" onclick="go('home')">Kembali ke beranda</button>
+        </div>
+      </section>
+
+      <!-- ---------- JUMAT RUTIN ---------- -->
+      <section class="screen" id="s-routine">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Jumat Rutin</h2></div>
+        <div class="pad">
+          <div style="background:linear-gradient(150deg,#0F4739,#08302A);border-radius:22px;padding:20px;color:#fff;margin-bottom:18px">
+            <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Kebiasaan, bukan kebetulan</div>
+            <div style="font-family:var(--disp);font-size:21px;line-height:1.3;font-weight:700">Rp50.000 tiap Jumat<br>= Rp2,6 juta setahun</div>
+            <p style="font-size:12.5px;color:#A9C6BC;line-height:1.6;margin:11px 0 0">Cukup atur sekali. Kamis malam diingatkan, Jumat pagi tersalurkan. Berhenti kapan saja tanpa syarat.</p>
+          </div>
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px">Nominal tiap Jumat</div>
+          <div class="chips" id="chips2" style="margin-bottom:18px">
+            <button class="chip" data-v="10.000">Rp10rb</button>
+            <button class="chip on" data-v="25.000">Rp25rb</button>
+            <button class="chip" data-v="50.000">Rp50rb</button>
+            <button class="chip" data-v="100.000">Rp100rb</button>
+            <button class="chip" data-v="200.000">Rp200rb</button>
+            <button class="chip" data-v="0">Lainnya</button>
+          </div>
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px">Disalurkan ke</div>
+          <div class="menu" style="margin-bottom:18px">
+            <div class="mr" onclick="toast('Program tujuan dipilih')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M5 8l2 2M2 16h3M19 16h3M17 10l2-2M17 16a5 5 0 0 0-10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+              <div class="in"><b>Infaq Subuh dan program mendesak</b><small>JUSI pilihkan program paling membutuhkan</small></div><span class="mpill">Terpilih</span></div>
+            <div class="mr" onclick="go('explore')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+              <div class="in"><b>Satu program tetap</b><small>Pilih sendiri masjid atau lembaganya</small></div>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="color:#B6C2BD"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:9px">Sumber dana</div>
+          <div class="pay on" onclick="pick(this)"><div class="pi">GOPAY</div><div class="in"><b>GoPay</b><small>Otomatis tiap Jumat 05.30 WIB</small></div><div class="radio"></div></div>
+          <div class="pay" onclick="pick(this)"><div class="pi">DANA</div><div class="in"><b>DANA</b><small>•••• 4471</small></div><div class="radio"></div></div>
+          <div class="swr" onclick="tog(this)"><i><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+            <div class="tx"><b>Ingatkan Kamis malam</b><small>Supaya sempat menyiapkan niat lebih dulu</small></div><div class="sw on"></div></div>
+          <div style="height:110px"></div>
+        </div>
+        <div class="cta"><button class="mbtn m-gold" onclick="activate()">Aktifkan Jumat Rutin</button></div>
+      </section>
+
+      <!-- ---------- JEJAK KEBAIKAN ---------- -->
+      <section class="screen" id="s-impact">
+        <div class="ihero">
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)">Total sedekah kamu</div>
+          <div class="itot">Rp4.320.000</div>
+          <small style="font-size:12px;color:#9CBBB1">dari 47 kali berbagi sejak Maret 2025</small>
+          <div class="imrow">
+            <div class="imc"><b>13</b><span>pekan beruntun</span></div>
+            <div class="imc"><b>9</b><span>program didukung</span></div>
+            <div class="imc"><b>4</b><span>amal jariah</span></div>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="sec">
+            <div class="sec-h"><h3>Ke mana perginya</h3></div>
+            <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:16px">
+              <div class="brk"><div class="brk-t"><b>Jumatan dan masjid</b><span>Rp1.520.000</span></div><div class="bar sm"><i style="width:35%;background:var(--em)"></i></div></div>
+              <div class="brk"><div class="brk-t"><b>Infaq Subuh</b><span>Rp1.100.000</span></div><div class="bar sm"><i style="width:26%;background:var(--em)"></i></div></div>
+              <div class="brk"><div class="brk-t"><b>Pendidikan dan dakwah</b><span>Rp870.000</span></div><div class="bar sm"><i style="width:20%;background:var(--em)"></i></div></div>
+              <div class="brk" style="margin-bottom:0"><div class="brk-t"><b>Amal jariah</b><span>Rp560.000</span></div><div class="bar sm"><i style="width:13%;background:var(--em)"></i></div></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="sec-h"><h3>Riwayat</h3><a onclick="toast('Rekap tahunan diunduh')">Unduh rekap</a></div>
+            <div class="hist">
+              <div class="hr"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <div class="in"><b>Renovasi atap Masjid Al-Ikhlas</b><small>Hari ini · QRIS</small><span class="bok">Laporan tahap 2 terbit</span></div><span class="amt">Rp52rb</span></div>
+              <div class="hr"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v3M5 8l2 2M2 16h3M19 16h3M17 10l2-2M17 16a5 5 0 0 0-10 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <div class="in"><b>Paket sahur pemulung</b><small>14 Agu 2026 · Jumat Rutin</small><span class="bok">Sudah disalurkan</span></div><span class="amt">Rp25rb</span></div>
+              <div class="hr"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 21c0-6 3-10 8-11-1 6-4 9-8 11zM12 21c0-5-2.5-8.5-7-9.5.8 5 3.5 8 7 9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+                <div class="in"><b>Sumur bor 3 dusun NTT</b><small>31 Jul 2026 · Amal jariah</small><span class="bok">Pengerjaan 86%</span></div><span class="amt">Rp250rb</span></div>
+            </div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- IBADAH ---------- -->
+      <section class="screen" id="s-ibadah">
+        <div class="prayer-hero">
+          <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)">Waktu salat berikutnya</div>
+          <div class="pr-next"><div class="big">Ashar 15.12</div><div class="lb">1 jam 24 menit lagi</div></div>
+          <div style="font-size:12px;color:#9CBBB1;margin-top:8px">Jakarta Selatan · metode Kementerian Agama</div>
+        </div>
+        <div class="pad">
+          <div class="sec">
+            <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:4px 16px">
+              <div class="pl"><span class="nm">Subuh</span><span class="tm">04.42</span><span class="bell" onclick="bell(this)"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></div>
+              <div class="pl"><span class="nm">Zuhur</span><span class="tm">11.58</span><span class="bell" onclick="bell(this)"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></div>
+              <div class="pl now"><span class="nm">Ashar</span><span class="tm">15.12</span><span class="bell" onclick="bell(this)"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></div>
+              <div class="pl"><span class="nm">Magrib</span><span class="tm">18.02</span><span class="bell" onclick="bell(this)"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></div>
+              <div class="pl"><span class="nm">Isya</span><span class="tm">19.12</span><span class="bell off" onclick="bell(this)"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M3 3l18 18" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></span></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div style="background:var(--em);border-radius:22px;padding:16px;color:#fff;display:flex;gap:13px;align-items:center;cursor:pointer" onclick="go('quran');toast('Surat Al-Kahfi dibuka')">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" style="color:var(--goldlt);flex:0 0 auto"><path d="M3 5.5C6 4 9 4 12 6c3-2 6-2 9-.5v13c-3-1.5-6-1.5-9 .5-3-2-6-2-9-.5v-13z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+              <div style="flex:1"><b style="font-family:var(--disp);font-size:15px;display:block;margin-bottom:3px">Hari ini Jumat — baca Al-Kahfi</b>
+                <span style="font-size:12px;color:#A9C6BC;line-height:1.5">Sekalian tunaikan sedekah Jumatmu setelah membaca.</span></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="sec-h"><h3>Teman ibadah</h3></div>
+            <div class="ibgrid">
+              <div class="ib" onclick="go('quran')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 5.5C6 4 9 4 12 6c3-2 6-2 9-.5v13c-3-1.5-6-1.5-9 .5-3-2-6-2-9-.5v-13zM12 6v13" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+                <b>Al-Quran</b><small>Terakhir dibaca Al-Baqarah 183</small></div>
+              <div class="ib" onclick="go('qibla')"><i><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M15 9l-2 5-5 2 2-5 5-2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+                <b>Arah kiblat</b><small>295° dari utara</small></div>
+              <div class="ib" onclick="go('zakat')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M8 7h6.5a2.5 2.5 0 0 1 0 5H9a2.5 2.5 0 0 0 0 5H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <b>Kalkulator zakat</b><small>Penghasilan, maal, fitrah</small></div>
+              <div class="ib" onclick="go('mosque')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-5.4 7-11a7 7 0 1 0-14 0c0 5.6 7 11 7 11z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg></i>
+                <b>Masjid terdekat</b><small>6 masjid dalam 2 km</small></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="sec-h"><h3>Kalender Hijriah</h3></div>
+            <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:16px">
+              <b style="font-family:var(--disp);font-size:16px">6 Rabiul Awal 1448 H</b>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px">Rabu, 19 Agustus 2026</div>
+              <div style="border-top:1px solid var(--line);margin-top:12px;padding-top:12px;font-size:12.5px;color:#42544E;line-height:1.6">
+                Amalan pekan ini: <b>puasa Senin–Kamis</b> dan <b>Ayyamul Bidh</b> pada 13–15 Rabiul Awal.
+              </div>
+            </div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- AL-QURAN ---------- -->
+      <section class="screen" id="s-quran">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Al-Quran</h2></div>
+        <div class="pad">
+          <div style="background:var(--em);border-radius:22px;padding:16px;color:#fff;margin-bottom:16px;cursor:pointer" onclick="go('reader')">
+            <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Lanjutkan membaca</div>
+            <b style="font-family:var(--disp);font-size:17px">Al-Baqarah : 183</b>
+            <div style="font-size:12px;color:#A9C6BC;margin-top:4px">Juz 2 · 34% khatam tahun ini</div>
+            <div class="bar sm" style="background:rgba(255,255,255,.18);margin-top:10px"><i style="width:34%"></i></div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:4px 16px">
+            <div class="surah" onclick="go('reader')"><span class="no">1</span><div class="in"><b>Al-Fatihah</b><small>Pembukaan · 7 ayat · Makkiyah</small></div><span class="ar">الفاتحة</span></div>
+            <div class="surah" onclick="go('reader')"><span class="no">2</span><div class="in"><b>Al-Baqarah</b><small>Sapi Betina · 286 ayat · Madaniyah</small></div><span class="ar">البقرة</span></div>
+            <div class="surah" onclick="go('reader')"><span class="no">18</span><div class="in"><b>Al-Kahfi</b><small>Gua · 110 ayat · Makkiyah</small></div><span class="ar">الكهف</span></div>
+            <div class="surah" onclick="go('reader')"><span class="no">36</span><div class="in"><b>Yasin</b><small>Yasin · 83 ayat · Makkiyah</small></div><span class="ar">يس</span></div>
+            <div class="surah" onclick="go('reader')"><span class="no">67</span><div class="in"><b>Al-Mulk</b><small>Kerajaan · 30 ayat · Makkiyah</small></div><span class="ar">الملك</span></div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- PEMBACA ---------- -->
+      <section class="screen" id="s-reader">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Al-Fatihah</h2>
+          <button class="bk" onclick="toast('Murottal diputar — Syekh Misyari Rasyid')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 5l11 7-11 7V5z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg></button>
+        </div>
+        <div class="pad">
+          <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:6px 18px 18px">
+            <div class="ayat"><span class="no">1</span>
+              <div class="ar">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+              <div class="tr">Dengan nama Allah Yang Maha Pengasih, Maha Penyayang.</div></div>
+            <div class="ayat"><span class="no">2</span>
+              <div class="ar">اَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَ</div>
+              <div class="tr">Segala puji bagi Allah, Tuhan seluruh alam.</div></div>
+            <div class="ayat" style="border-bottom:0"><span class="no">3</span>
+              <div class="ar">الرَّحْمٰنِ الرَّحِيْمِ</div>
+              <div class="tr">Yang Maha Pengasih, Maha Penyayang.</div></div>
+          </div>
+          <div style="display:flex;gap:9px;margin-top:14px">
+            <button class="mbtn m-gh" onclick="toast('Penanda terakhir dibaca disimpan')">Simpan penanda</button>
+            <button class="mbtn m-gh" onclick="toast('Ukuran huruf diperbesar')">Ukuran huruf</button>
+          </div>
+          <div style="background:#FBF3E3;border-radius:16px;padding:14px;margin-top:16px;font-size:12.5px;color:#7A5A14;line-height:1.6">
+            Sumber teks dan terjemahan mengikuti mushaf resmi Kementerian Agama. Audio murottal menyusul setelah izin penerbit diperoleh.
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- KIBLAT ---------- -->
+      <section class="screen" id="s-qibla">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Arah kiblat</h2></div>
+        <div class="pad" style="text-align:center">
+          <div class="qcompass">
+            <span class="qmark" style="top:8px">U</span><span class="qmark" style="bottom:8px">S</span>
+            <span class="qmark" style="left:10px">B</span><span class="qmark" style="right:10px">T</span>
+            <div class="qneedle"></div>
+          </div>
+          <div style="font-family:var(--disp);font-size:26px;font-weight:800;color:var(--em);letter-spacing:-.03em">295° dari utara</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:4px">Jakarta Selatan · jarak 7.907 km ke Kabah</div>
+          <button class="mbtn m-gh" style="margin-top:20px" onclick="toast('Kalibrasi selesai — putar ponsel membentuk angka 8')">Kalibrasi kompas</button>
+          <div style="background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-top:16px;text-align:left;font-size:12.5px;color:#42544E;line-height:1.6">
+            Letakkan ponsel mendatar dan jauhkan dari benda logam agar pembacaan kompas lebih akurat.
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- ZAKAT ---------- -->
+      <section class="screen" id="s-zakat">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Kalkulator zakat</h2></div>
+        <div class="pad">
+          <div class="chips" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px" id="ztype">
+            <button class="chip on">Penghasilan</button><button class="chip">Maal</button><button class="chip">Fitrah</button>
+          </div>
+          <div class="fldm"><label>Penghasilan per bulan</label>
+            <input type="text" id="zIncome" value="12.000.000" inputmode="numeric"></div>
+          <div class="fldm"><label>Penghasilan lain per bulan</label>
+            <input type="text" id="zOther" value="0" inputmode="numeric"></div>
+          <div class="fldm"><label>Kebutuhan pokok per bulan <span style="color:var(--muted);font-weight:400">— dikurangkan</span></label>
+            <input type="text" id="zNeed" value="4.000.000" inputmode="numeric"></div>
+          <div class="zres">
+            <div class="lb">Zakat penghasilan (2,5%)</div>
+            <div class="big" id="zOut">Rp200.000</div>
+            <small id="zNote">Penghasilan bersih kamu di atas nisab bulanan. Zakat wajib ditunaikan.</small>
+          </div>
+          <button class="mbtn m-gold" style="margin-top:14px" onclick="go('amount');toast('Nominal zakat dibawa ke halaman penyaluran')">Salurkan sekarang</button>
+          <p style="font-size:11px;color:var(--muted);line-height:1.55;margin-top:12px">Perhitungan mengikuti nisab emas 85 gram. Untuk kasus khusus, sebaiknya dikonsultasikan kepada lembaga amil zakat.</p>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- MASJID TERDEKAT ---------- -->
+      <section class="screen" id="s-mosque">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Masjid terdekat</h2></div>
+        <div class="pad">
+          <div style="height:130px;border-radius:16px;background:linear-gradient(150deg,#DDE7E2,#EFF3F1);position:relative;overflow:hidden;margin-bottom:16px">
+            <svg viewBox="0 0 350 130" style="position:absolute;inset:0;width:100%;height:100%">
+              <path d="M0 90h350M120 0v130M240 0v130" stroke="#C8D4CE" stroke-width="6" fill="none"/>
+              <circle cx="120" cy="90" r="9" fill="#0B3B33"/><circle cx="240" cy="42" r="7" fill="#C8963E"/><circle cx="62" cy="46" r="7" fill="#C8963E"/>
+            </svg>
+          </div>
+          <div class="menu">
+            <div class="mr" onclick="toast('Rute dibuka di aplikasi peta')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+              <div class="in"><b>Masjid Al-Ikhlas</b><small>320 m · sedang menghimpun dana renovasi</small></div><span class="mpill">Ada program</span></div>
+            <div class="mr" onclick="toast('Rute dibuka di aplikasi peta')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+              <div class="in"><b>Masjid Jami Baiturrahim</b><small>780 m · nasi Jumat berkah tiap pekan</small></div><span class="mpill">Ada program</span></div>
+            <div class="mr" onclick="toast('Rute dibuka di aplikasi peta')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+              <div class="in"><b>Musala Nurul Iman</b><small>1,1 km · belum terdaftar di JUSI</small></div>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="color:#B6C2BD"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- NOTIFIKASI ---------- -->
+      <section class="screen" id="s-notif">
+        <div class="navb"><button class="bk" onclick="back()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>Notifikasi</h2></div>
+        <div class="pad">
+          <div class="hist">
+            <div class="hr" onclick="go('detail');seg2('jejak')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+              <div class="in"><b>Laporan tahap 2 sudah terbit</b><small>Renovasi atap Masjid Al-Ikhlas · 2 jam lalu</small></div></div>
+            <div class="hr" onclick="go('ibadah')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 5.5C6 4 9 4 12 6c3-2 6-2 9-.5v13c-3-1.5-6-1.5-9 .5-3-2-6-2-9-.5v-13z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+              <div class="in"><b>Hari ini Jumat — baca Al-Kahfi</b><small>Pengingat ibadah · 05.10</small></div></div>
+            <div class="hr" onclick="go('routine')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+              <div class="in"><b>Besok Jumat, siapkan satu kebaikan</b><small>Pengingat Jumat Rutin · kemarin 19.00</small></div></div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- ---------- AKUN ---------- -->
+      <section class="screen" id="s-account">
+        <div class="ihero" style="text-align:center">
+          <div style="width:74px;height:74px;border-radius:24px;background:linear-gradient(135deg,var(--goldlt),var(--gold));display:grid;place-items:center;font-size:26px;font-weight:800;color:#33230A;margin:0 auto 12px">RH</div>
+          <b style="font-family:var(--disp);font-size:20px;display:block">Rizal Hakim</b>
+          <small style="font-size:12px;color:#9CBBB1">rizal.hakim@email.com · Bergabung Maret 2025</small>
+        </div>
+        <div class="pad">
+          <div class="sec">
+            <div class="sec-h"><h3>Sedekah saya</h3></div>
+            <div class="menu">
+              <div class="mr" onclick="go('routine')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v5h-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+                <div class="in"><b>Jumat Rutin</b><small>Rp25.000 tiap Jumat · GoPay</small></div><span class="mpill" id="rtPill">Aktif</span></div>
+              <div class="mr" onclick="go('impact')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M10 19V5M16 19v-6M22 19H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <div class="in"><b>Jejak kebaikan</b><small>Riwayat, laporan, dan rekap tahunan</small></div></div>
+              <div class="mr" onclick="toast('Metode pembayaran dikelola')"><i><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 10h19" stroke="currentColor" stroke-width="1.8"/></svg></i>
+                <div class="in"><b>Metode pembayaran</b><small>GoPay, DANA, 1 kartu</small></div></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="sec-h"><h3>Untuk lembaga</h3></div>
+            <div class="menu">
+              <div class="mr" onclick="switchProd('lem')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M2.5 20h19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <div class="in"><b>Daftarkan masjid atau yayasan</b><small>Buka program, kelola donasi, terbitkan laporan</small></div>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" style="color:#B6C2BD"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="mr" onclick="toast('Syarat verifikasi lembaga dibuka')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6l8-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+                <div class="in"><b>Cara kami memverifikasi</b><small>Legalitas, rekening, dan audit penyaluran</small></div></div>
+            </div>
+          </div>
+          <div class="sec">
+            <div class="menu">
+              <div class="mr" onclick="go('notif')"><i><svg viewBox="0 0 24 24" fill="none"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></i>
+                <div class="in"><b>Notifikasi</b><small>Pengingat Jumat, laporan penyaluran</small></div></div>
+              <div class="mr" onclick="toast('Pusat bantuan dibuka')"><i><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.3 2.4c-.5.2-.8.7-.8 1.2v.4M12 16.8v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></i>
+                <div class="in"><b>Bantuan</b><small>Pertanyaan umum dan hubungi kami</small></div></div>
+            </div>
+          </div>
+          <div class="tail"></div>
+        </div>
+      </section>
+
+      <!-- tab bar -->
+      <nav class="tabbar" id="tabbar">
+        <button class="tb on" data-tab="home" onclick="go('home')">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Beranda</span></button>
+        <button class="tb" data-tab="explore" onclick="go('explore')">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7.5" stroke="currentColor" stroke-width="1.8"/><path d="M20.5 20.5L17 17" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Program</span></button>
+        <button class="fab" onclick="go('amount')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z" opacity=".28"/><path d="M12 8.6c1.4-2.6 5.3-2.1 5.3 1 0 2.5-3.4 4.9-5.3 6.2-1.9-1.3-5.3-3.7-5.3-6.2 0-3.1 3.9-3.6 5.3-1z"/></svg></button>
+        <button class="tb" data-tab="ibadah" onclick="go('ibadah')">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 2c1.8 1.6 2.6 3 2.6 4.4 0 1.6-2.6 2.8-2.6 2.8S9.4 8 9.4 6.4C9.4 5 10.2 3.6 12 2zM4 21v-7c0-2.6 3.6-4.6 8-4.6s8 2 8 4.6v7M4 21h16" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg><span>Ibadah</span></button>
+        <button class="tb" data-tab="account" onclick="go('account')">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.8" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Akun</span></button>
+      </nav>
+
+      <div class="toast" id="toast-app"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg><span></span></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- =============== 2. DASHBOARD LEMBAGA ============================ -->
+<!-- ================================================================= -->
+<section class="stage" id="stage-lem">
+  <div class="stage-head">
+    <h1>Dashboard Lembaga</h1>
+    <p>Muka kerja masjid dan yayasan penerima: mengajukan program, memantau donasi masuk, mengunggah bukti penyaluran, dan mengajukan pencairan bertahap.</p>
+  </div>
+  <div class="stage-inner">
+  <div class="win" style="position:relative">
+    <div class="win-chrome">
+      <span class="dot" style="background:#F0685F"></span><span class="dot" style="background:#F5C04E"></span><span class="dot" style="background:#63C767"></span>
+      <div class="url">jusi.com/lembaga/dashboard</div>
+    </div>
+    <div class="win-body">
+      <aside class="side">
+        <div class="side-brand">
+          <svg width="26" height="26" viewBox="0 0 48 48" fill="none"><path d="M24 3l4.6 3.9 6-.6 1.5 5.9 5.4 2.8-1.6 5.9 3.5 4.9-3.5 4.9 1.6 5.9-5.4 2.8-1.5 5.9-6-.6L24 45l-4.6-3.9-6 .6-1.5-5.9-5.4-2.8 1.6-5.9L4.6 22l3.5-4.9-1.6-5.9 5.4-2.8 1.5-5.9 6 .6L24 3z" stroke="#C8963E" stroke-width="1.8"/><path d="M15 24c0 5 4 9 9 9s9-4 9-9" stroke="#E7C67E" stroke-width="2.6" stroke-linecap="round"/></svg>
+          <div><b>JUSI</b><span>Lembaga</span></div>
+        </div>
+        <button class="snav on" data-w="lem" data-p="lem-ring" onclick="wgo('lem','lem-ring',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M10 19V5M16 19v-6M22 19H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Ringkasan</button>
+        <button class="snav" onclick="wgo('lem','lem-prog',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Program saya</button>
+        <button class="snav" onclick="wgo('lem','lem-new',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>Ajukan program</button>
+        <div class="side-lbl">Penyaluran</div>
+        <button class="snav" onclick="wgo('lem','lem-lap',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M14 3v5h5M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Laporan &amp; bukti<span class="badge">1</span></button>
+        <button class="snav" onclick="wgo('lem','lem-cair',this)">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 10h19" stroke="currentColor" stroke-width="1.8"/></svg>Pencairan dana</button>
+        <div class="side-lbl">Donatur</div>
+        <button class="snav" onclick="wgo('lem','lem-don',this)">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Donatur &amp; doa</button>
+        <button class="snav" onclick="wgo('lem','lem-set',this)">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 7.5 19.4l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.6 14H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 7.5l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 3.6V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.5 1.4l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z" stroke="currentColor" stroke-width="1.5"/></svg>Pengaturan</button>
+        <div class="side-foot"><b>Yayasan Baitul Amanah</b>Terverifikasi · Bogor</div>
+      </aside>
+
+      <div class="main" id="main-lem">
+        <!-- Ringkasan -->
+        <div class="wpage act" id="p-lem-ring">
+          <div class="wtop"><div><h2>Ringkasan</h2><p>Kondisi program dan donasi Yayasan Baitul Amanah bulan ini.</p></div>
+            <div class="acts"><button class="btn b-gold" onclick="wgo('lem','lem-new')">Ajukan program</button></div></div>
+          <div class="kpis">
+            <div class="kpi dark"><b>Rp34,2 jt</b><span>Terkumpul bulan ini</span></div>
+            <div class="kpi"><b>218</b><span>Donatur aktif</span></div>
+            <div class="kpi"><b>Rp21,4 jt</b><span>Siap dicairkan</span></div>
+            <div class="kpi"><b>2 dari 3</b><span>Laporan tahap terbit</span></div>
+          </div>
+          <div class="card" style="border-color:#F0DFBB;background:#FDF8EE">
+            <div class="card-b" style="display:flex;gap:14px;align-items:center">
+              <span class="pill p-wait">Perlu tindakan</span>
+              <div style="flex:1;font-size:13px;line-height:1.55">Program <b>Nasi Jumat berkah</b> sudah 14 hari sejak penyaluran terakhir tanpa laporan. Pencairan tahap berikutnya ditahan sampai bukti diunggah.</div>
+              <button class="btn b-em" onclick="wgo('lem','lem-lap')">Unggah bukti</button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h"><b>Donasi 7 hari terakhir</b></div>
+              <div class="card-b">
+                <svg viewBox="0 0 320 120" style="width:100%;height:120px">
+                  <g fill="#0B3B33">
+                    <rect x="10" y="70" width="30" height="42" rx="4"/><rect x="52" y="52" width="30" height="60" rx="4"/>
+                    <rect x="94" y="60" width="30" height="52" rx="4"/><rect x="136" y="34" width="30" height="78" rx="4"/>
+                    <rect x="178" y="46" width="30" height="66" rx="4"/><rect x="220" y="18" width="30" height="94" rx="4" fill="#C8963E"/>
+                    <rect x="262" y="64" width="30" height="48" rx="4"/>
+                  </g>
+                  <g fill="#8C9A95" font-size="9" font-family="Plus Jakarta Sans">
+                    <text x="16" y="119">Kam</text><text x="58" y="119">Jum</text><text x="100" y="119">Sab</text><text x="142" y="119">Min</text><text x="184" y="119">Sen</text><text x="226" y="119">Sel</text><text x="268" y="119">Rab</text>
+                  </g>
+                </svg>
+                <div style="font-size:12px;color:var(--muted);margin-top:8px">Puncak donasi terjadi pada Selasa setelah laporan tahap 2 terbit.</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><b>Aktivitas terbaru</b></div>
+              <div class="card-b">
+                <div class="tl">
+                  <div class="tl-i"><b>Laporan tahap 2 terbit</b><small>Hari ini 10.24</small><p>Faktur rangka baja ringan dan 6 foto diunggah, notifikasi terkirim ke 218 donatur.</p></div>
+                  <div class="tl-i"><b>Pencairan Rp12,4 jt disetujui</b><small>Kemarin 16.02</small><p>Dana masuk ke rekening yayasan dalam 1 hari kerja.</p></div>
+                  <div class="tl-i open"><b>Program baru menunggu moderasi</b><small>2 hari lalu</small><p>Perbaikan tempat wudu sedang ditinjau admin JUSI.</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Program saya -->
+        <div class="wpage" id="p-lem-prog">
+          <div class="wtop"><div><h2>Program saya</h2><p>Semua program yang pernah diajukan beserta status penghimpunan dan kewajiban laporannya.</p></div>
+            <div class="acts"><button class="btn b-gold" onclick="wgo('lem','lem-new')">Ajukan program</button></div></div>
+          <div class="card">
+            <table class="t">
+              <tr><th>Program</th><th>Terkumpul</th><th>Target</th><th>Donatur</th><th>Laporan</th><th>Status</th><th></th></tr>
+              <tr class="click" onclick="wgo('lem','lem-lap')"><td><span class="tname">Renovasi atap Masjid Al-Ikhlas</span><span class="tsub">Berakhir 6 Sep 2026</span></td>
+                <td>Rp34.200.000<div class="bar sm" style="margin-top:6px"><i style="width:68%"></i></div></td><td>Rp50.000.000</td><td>218</td><td>2 dari 3</td><td><span class="pill p-ok">Berjalan</span></td><td><button class="btn b-gh b-sm">Kelola</button></td></tr>
+              <tr class="click" onclick="wgo('lem','lem-lap')"><td><span class="tname">Beasiswa 40 santri penghafal Quran</span><span class="tsub">Berakhir 19 Sep 2026</span></td>
+                <td>Rp21.200.000<div class="bar sm" style="margin-top:6px"><i style="width:53%"></i></div></td><td>Rp40.000.000</td><td>147</td><td>1 dari 2</td><td><span class="pill p-ok">Berjalan</span></td><td><button class="btn b-gh b-sm">Kelola</button></td></tr>
+              <tr class="click" onclick="wgo('lem','lem-lap')"><td><span class="tname">Nasi Jumat berkah untuk jamaah</span><span class="tsub">Program rutin mingguan</span></td>
+                <td>Rp3.700.000<div class="bar sm" style="margin-top:6px"><i style="width:74%"></i></div></td><td>Rp5.000.000</td><td>62</td><td>Terlambat</td><td><span class="pill p-wait">Perlu laporan</span></td><td><button class="btn b-em b-sm">Unggah</button></td></tr>
+              <tr><td><span class="tname">Perbaikan tempat wudu</span><span class="tsub">Diajukan 17 Agu 2026</span></td>
+                <td>—</td><td>Rp18.000.000</td><td>—</td><td>—</td><td><span class="pill p-new">Menunggu moderasi</span></td><td><button class="btn b-gh b-sm" onclick="event.stopPropagation();toast('lem','Pengajuan dibuka')">Lihat</button></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ajukan program -->
+        <div class="wpage" id="p-lem-new">
+          <div class="wtop"><div><h2>Ajukan program</h2><p>Program akan tayang setelah melewati moderasi admin JUSI, biasanya dalam 1×24 jam kerja.</p></div></div>
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h"><b>Tentang program</b></div>
+              <div class="card-b">
+                <div class="fld"><label>Nama program</label><input type="text" value="Perbaikan tempat wudu Masjid Al-Ikhlas"></div>
+                <div class="fld"><label>Kategori</label>
+                  <select><option>Jumatan</option><option>Infaq Subuh</option><option>Sedekah</option><option>Pendidikan &amp; Dakwah</option><option>Amal Jariah</option></select></div>
+                <div class="fld"><label>Cerita program</label>
+                  <textarea rows="5">Tempat wudu masjid sudah retak dan air merembes ke lantai serambi. Jamaah lansia beberapa kali terpeleset saat musim hujan.</textarea>
+                  <div class="help">Tulis apa adanya. Donatur lebih percaya pada cerita spesifik daripada kalimat umum.</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="card">
+                <div class="card-h"><b>Target dan waktu</b></div>
+                <div class="card-b">
+                  <div class="fld"><label>Target dana</label><input type="text" value="18.000.000"></div>
+                  <div class="fld"><label>Tenggat penghimpunan</label><input type="text" value="30 September 2026"></div>
+                  <div class="fld"><label>Rincian kebutuhan</label>
+                    <textarea rows="3">Keramik dan pekerjaan lantai Rp9 jt · Pipa dan kran Rp5 jt · Upah tukang Rp3,2 jt · Operasional lembaga Rp800 rb</textarea></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-h"><b>Foto program</b><span class="sub">minimal 3 foto</span></div>
+                <div class="card-b">
+                  <div class="drop" onclick="toast('lem','3 foto ditambahkan')">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M12 16V4M8 8l4-4 4 4M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <b>Tarik foto ke sini atau klik untuk memilih</b><span>JPG atau PNG, maksimal 5 MB per foto</span>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;gap:9px;justify-content:flex-end">
+                <button class="btn b-gh" onclick="toast('lem','Draf disimpan')">Simpan draf</button>
+                <button class="btn b-gold" onclick="submitProg()">Kirim untuk moderasi</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Laporan & bukti -->
+        <div class="wpage" id="p-lem-lap">
+          <div class="wtop"><div><h2>Laporan &amp; bukti</h2><p>Setiap penyaluran wajib disertai bukti. Laporan yang terbit langsung tampil di Jejak Dana pada aplikasi donatur.</p></div></div>
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h"><b>Jejak dana — Renovasi atap Masjid Al-Ikhlas</b></div>
+              <div class="card-b">
+                <div class="tl" id="traceLem">
+                  <div class="tl-i"><b>Rp12.400.000 dibelanjakan</b><small>18 Agu 2026 · Tahap 2 · terbit</small><p>Rangka baja ringan 96 batang di UD Sinar Jaya. Faktur dan 6 foto terlampir.</p></div>
+                  <div class="tl-i"><b>Rp9.000.000 dibelanjakan</b><small>4 Agu 2026 · Tahap 1 · terbit</small><p>Pembongkaran atap lama oleh 6 tukang warga selama 4 hari.</p></div>
+                  <div class="tl-i open"><b>Tahap 3 belum dilaporkan</b><small>Estimasi 12 Sep 2026</small><p>Pemasangan genteng dan talang. Unggah bukti setelah pekerjaan selesai.</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><b>Unggah laporan tahap 3</b></div>
+              <div class="card-b">
+                <div class="fld"><label>Nominal yang dibelanjakan</label><input type="text" id="lapAmt" value="14.000.000"></div>
+                <div class="fld"><label>Keterangan penyaluran</label>
+                  <textarea rows="3" id="lapNote">Pembelian genteng metal 240 lembar dan talang air, dipasang oleh tim tukang selama 5 hari.</textarea></div>
+                <div class="fld"><label>Bukti wajib</label>
+                  <div class="drop" onclick="toast('lem','Faktur dan 4 foto ditambahkan')">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M14 3v5h5M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+                    <b>Unggah faktur dan foto pekerjaan</b><span>Minimal 1 faktur dan 3 foto</span></div>
+                </div>
+                <button class="btn b-gold" style="width:100%;justify-content:center" onclick="terbitkan()">Terbitkan laporan ke donatur</button>
+                <p style="font-size:11.5px;color:var(--muted);line-height:1.55;margin:10px 0 0">Laporan yang sudah terbit tidak dapat dihapus, hanya bisa ditambah keterangan. Ini menjaga kepercayaan donatur.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pencairan -->
+        <div class="wpage" id="p-lem-cair">
+          <div class="wtop"><div><h2>Pencairan dana</h2><p>Dana ditahan di rekening penampungan dan dicairkan bertahap sesuai kemajuan pekerjaan.</p></div>
+            <div class="acts"><button class="btn b-gold" onclick="ajukanCair()">Ajukan pencairan</button></div></div>
+          <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi dark"><b>Rp21,4 jt</b><span>Saldo siap dicairkan</span></div>
+            <div class="kpi"><b>Rp21,4 jt</b><span>Sudah dicairkan</span></div>
+            <div class="kpi"><b>1 hari kerja</b><span>Rata-rata waktu proses</span></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><b>Riwayat pencairan</b></div>
+            <table class="t">
+              <tr><th>Tanggal</th><th>Program</th><th>Nominal</th><th>Rekening tujuan</th><th>Status</th></tr>
+              <tr><td>18 Agu 2026</td><td>Renovasi atap Masjid Al-Ikhlas</td><td><b>Rp12.400.000</b></td><td>BSI •••• 8821 a.n. Yayasan Baitul Amanah</td><td><span class="pill p-ok">Dana diterima</span></td></tr>
+              <tr><td>4 Agu 2026</td><td>Renovasi atap Masjid Al-Ikhlas</td><td><b>Rp9.000.000</b></td><td>BSI •••• 8821 a.n. Yayasan Baitul Amanah</td><td><span class="pill p-ok">Dana diterima</span></td></tr>
+              <tr><td>—</td><td>Nasi Jumat berkah untuk jamaah</td><td><b>Rp2.500.000</b></td><td>BSI •••• 8821 a.n. Yayasan Baitul Amanah</td><td><span class="pill p-bad">Ditahan — laporan kurang</span></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Donatur & doa -->
+        <div class="wpage" id="p-lem-don">
+          <div class="wtop"><div><h2>Donatur &amp; doa</h2><p>Balas doa yang dititipkan donatur. Balasan tampil di halaman program pada aplikasi.</p></div></div>
+          <div class="card">
+            <table class="t">
+              <tr><th>Donatur</th><th>Program</th><th>Nominal</th><th>Doa yang dititipkan</th><th></th></tr>
+              <tr><td><span class="tname">Hamba Allah</span><span class="tsub">2 jam lalu</span></td><td>Renovasi atap</td><td><b>Rp500.000</b></td>
+                <td style="font-style:italic;color:#4A5C56">"Semoga jadi pemberat timbangan amal orang tua saya."</td>
+                <td><button class="btn b-gh b-sm" onclick="balas(this)">Balas</button></td></tr>
+              <tr><td><span class="tname">Siti Wulandari</span><span class="tsub">5 jam lalu · Jumat Rutin</span></td><td>Renovasi atap</td><td><b>Rp50.000</b></td>
+                <td style="font-style:italic;color:#4A5C56">"Sedikit, semoga tetap bermanfaat."</td>
+                <td><button class="btn b-gh b-sm" onclick="balas(this)">Balas</button></td></tr>
+              <tr><td><span class="tname">Budi Prasetyo</span><span class="tsub">Kemarin · Jumat Rutin</span></td><td>Beasiswa santri</td><td><b>Rp100.000</b></td>
+                <td style="font-style:italic;color:#4A5C56">"Titip doa untuk kesembuhan ibu saya."</td>
+                <td><button class="btn b-gh b-sm" onclick="balas(this)">Balas</button></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pengaturan -->
+        <div class="wpage" id="p-lem-set">
+          <div class="wtop"><div><h2>Pengaturan lembaga</h2><p>Data legalitas dan rekening yang dipakai untuk verifikasi dan pencairan.</p></div></div>
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h"><b>Profil lembaga</b><span class="pill p-ok" style="margin-left:auto">Terverifikasi</span></div>
+              <div class="card-b">
+                <div class="fld"><label>Nama lembaga</label><input type="text" value="Yayasan Baitul Amanah"></div>
+                <div class="fld"><label>Alamat</label><input type="text" value="Jl. Cikaret Raya No. 24, Bogor"></div>
+                <div class="fld"><label>Penanggung jawab</label><input type="text" value="Munir Abdullah — Ketua Takmir"></div>
+                <button class="btn b-gh" onclick="toast('lem','Perubahan disimpan')">Simpan perubahan</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><b>Legalitas dan rekening</b></div>
+              <div class="card-b">
+                <table class="t" style="margin-bottom:14px">
+                  <tr><td>Akta pendirian</td><td style="text-align:right"><span class="pill p-ok">Diterima</span></td></tr>
+                  <tr><td>NPWP yayasan</td><td style="text-align:right"><span class="pill p-ok">Diterima</span></td></tr>
+                  <tr><td>SK Kemenkumham</td><td style="text-align:right"><span class="pill p-ok">Diterima</span></td></tr>
+                  <tr><td>Izin penghimpunan dana</td><td style="text-align:right"><span class="pill p-wait">Akan berakhir 12 Des 2026</span></td></tr>
+                </table>
+                <div class="fld"><label>Rekening pencairan</label><input type="text" value="BSI 8821xxxx a.n. Yayasan Baitul Amanah"></div>
+                <p style="font-size:11.5px;color:var(--muted);line-height:1.55">Rekening wajib atas nama badan hukum, bukan perorangan. Perubahan rekening memerlukan verifikasi ulang.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-lem">
+      <div class="modal-box">
+        <div class="modal-h"><b id="mlemT">Judul</b><p id="mlemP">Deskripsi</p></div>
+        <div class="modal-b" id="mlemB"></div>
+        <div class="modal-f">
+          <button class="btn b-gh" onclick="closeModal('lem')">Batal</button>
+          <button class="btn b-gold" id="mlemOk">Konfirmasi</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast-lem"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg><span></span></div>
+  </div>
+  </div>
+</section>
+
+<!-- ================================================================= -->
+<!-- =============== 3. PANEL ADMIN ================================== -->
+<!-- ================================================================= -->
+<section class="stage" id="stage-adm">
+  <div class="stage-head">
+    <h1>Panel Admin</h1>
+    <p>Muka kendali pengelola platform: memverifikasi legalitas lembaga, memoderasi program sebelum tayang, menyetujui pencairan, dan merekonsiliasi penerimaan.</p>
+  </div>
+  <div class="stage-inner">
+  <div class="win" style="position:relative">
+    <div class="win-chrome">
+      <span class="dot" style="background:#F0685F"></span><span class="dot" style="background:#F5C04E"></span><span class="dot" style="background:#63C767"></span>
+      <div class="url">admin.jusi.com/verifikasi</div>
+    </div>
+    <div class="win-body">
+      <aside class="side">
+        <div class="side-brand">
+          <svg width="26" height="26" viewBox="0 0 48 48" fill="none"><path d="M24 3l4.6 3.9 6-.6 1.5 5.9 5.4 2.8-1.6 5.9 3.5 4.9-3.5 4.9 1.6 5.9-5.4 2.8-1.5 5.9-6-.6L24 45l-4.6-3.9-6 .6-1.5-5.9-5.4-2.8 1.6-5.9L4.6 22l3.5-4.9-1.6-5.9 5.4-2.8 1.5-5.9 6 .6L24 3z" stroke="#C8963E" stroke-width="1.8"/><path d="M15 24c0 5 4 9 9 9s9-4 9-9" stroke="#E7C67E" stroke-width="2.6" stroke-linecap="round"/></svg>
+          <div><b>JUSI</b><span>Admin</span></div>
+        </div>
+        <button class="snav on" onclick="wgo('adm','adm-ring',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V9M10 19V5M16 19v-6M22 19H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Ringkasan</button>
+        <div class="side-lbl">Antrean kerja</div>
+        <button class="snav" onclick="wgo('adm','adm-ver',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l8 3v6c0 5-3.4 8.3-8 9-4.6-.7-8-4-8-9V6l8-3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>Verifikasi lembaga<span class="badge" id="badgeVer">7</span></button>
+        <button class="snav" onclick="wgo('adm','adm-mod',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 5h16M4 12h16M4 19h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Moderasi program<span class="badge" id="badgeMod">12</span></button>
+        <button class="snav" onclick="wgo('adm','adm-cair',this)">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="5" width="19" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 10h19" stroke="currentColor" stroke-width="1.8"/></svg>Persetujuan pencairan<span class="badge">3</span></button>
+        <div class="side-lbl">Keuangan</div>
+        <button class="snav" onclick="wgo('adm','adm-trx',this)">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M3 7h18M3 12h18M3 17h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Transaksi &amp; rekonsiliasi</button>
+        <button class="snav" onclick="wgo('adm','adm-usr',this)">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M5 20a7 7 0 0 1 14 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Pengguna &amp; peran</button>
+        <div class="side-foot"><b>Nadia Rahmawati</b>Admin platform · sesi aktif</div>
+      </aside>
+
+      <div class="main" id="main-adm">
+        <!-- Ringkasan -->
+        <div class="wpage act" id="p-adm-ring">
+          <div class="wtop"><div><h2>Ringkasan platform</h2><p>Kondisi antrean kerja dan kesehatan transaksi hari ini.</p></div></div>
+          <div class="kpis">
+            <div class="kpi dark"><b>Rp186 jt</b><span>Donasi bulan berjalan</span></div>
+            <div class="kpi"><b>7</b><span>Lembaga menunggu verifikasi</span></div>
+            <div class="kpi"><b>12</b><span>Program menunggu moderasi</span></div>
+            <div class="kpi"><b>98,2%</b><span>Rekonsiliasi cocok</span></div>
+          </div>
+          <div class="grid2">
+            <div class="card">
+              <div class="card-h"><b>Perlu perhatian hari ini</b></div>
+              <div class="card-b">
+                <div class="tl">
+                  <div class="tl-i"><b>1 lembaga dengan rekening perorangan</b><small>Masjid Jami Baiturrahim</small><p>Rekening pencairan bukan atas nama badan hukum. Verifikasi ditahan sampai diperbaiki.</p></div>
+                  <div class="tl-i"><b>3 program lewat tenggat laporan</b><small>Selisih 14–21 hari</small><p>Pencairan otomatis tertahan. Kirim pengingat ke lembaga terkait.</p></div>
+                  <div class="tl-i open"><b>Selisih rekonsiliasi Rp340.000</b><small>Batch QRIS 18 Agu</small><p>Kemungkinan transaksi pending di sisi agregator. Cek ulang besok pagi.</p></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><b>Donasi 6 bulan terakhir</b></div>
+              <div class="card-b">
+                <svg viewBox="0 0 320 130" style="width:100%;height:130px">
+                  <polyline points="20,100 70,88 120,72 170,58 220,44 280,22" fill="none" stroke="#C8963E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <g fill="#0B3B33"><circle cx="20" cy="100" r="4"/><circle cx="70" cy="88" r="4"/><circle cx="120" cy="72" r="4"/><circle cx="170" cy="58" r="4"/><circle cx="220" cy="44" r="4"/><circle cx="280" cy="22" r="4"/></g>
+                  <g fill="#8C9A95" font-size="9" font-family="Plus Jakarta Sans"><text x="10" y="122">Mar</text><text x="60" y="122">Apr</text><text x="110" y="122">Mei</text><text x="160" y="122">Jun</text><text x="210" y="122">Jul</text><text x="264" y="122">Agu</text></g>
+                </svg>
+                <div style="font-size:12px;color:var(--muted);margin-top:6px">Pertumbuhan terbesar datang dari donatur Jumat Rutin, bukan dari donatur baru.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verifikasi lembaga -->
+        <div class="wpage" id="p-adm-ver">
+          <div class="wtop"><div><h2>Verifikasi lembaga</h2><p>Lembaga tidak dapat menerima donasi sebelum legalitas dan rekeningnya lolos pemeriksaan.</p></div></div>
+          <div class="card">
+            <table class="t" id="tblVer">
+              <tr><th>Lembaga</th><th>Dokumen legalitas</th><th>Rekening</th><th>Program diajukan</th><th>Status</th><th>Tindakan</th></tr>
+              <tr><td><span class="tname">Yayasan Air Untuk Negeri</span><span class="tsub">NTT · diajukan 17 Agu</span></td>
+                <td>Akta, NPWP, izin PUB</td><td>Atas nama yayasan</td><td>3</td>
+                <td><span class="pill p-new">Menunggu tinjauan</span></td>
+                <td><div style="display:flex;gap:6px"><button class="btn b-em b-sm" onclick="verif(this,'ok')">Setujui</button><button class="btn b-bad b-sm" onclick="verif(this,'no')">Tolak</button></div></td></tr>
+              <tr><td><span class="tname">Rumah Tahfiz Al-Hikmah</span><span class="tsub">Bandung · diajukan 16 Agu</span></td>
+                <td>Akta, NPWP</td><td>Atas nama yayasan</td><td>1</td>
+                <td><span class="pill p-new">Menunggu tinjauan</span></td>
+                <td><div style="display:flex;gap:6px"><button class="btn b-em b-sm" onclick="verif(this,'ok')">Setujui</button><button class="btn b-bad b-sm" onclick="verif(this,'no')">Tolak</button></div></td></tr>
+              <tr><td><span class="tname">Masjid Jami Baiturrahim</span><span class="tsub">Depok · diajukan 15 Agu</span></td>
+                <td>SK pengurus — NPWP belum ada</td><td style="color:var(--bad);font-weight:600">Atas nama perorangan</td><td>1</td>
+                <td><span class="pill p-wait">Perlu kelengkapan</span></td>
+                <td><button class="btn b-gh b-sm" onclick="toast('adm','Permintaan kelengkapan dikirim ke pengurus')">Minta lengkapi</button></td></tr>
+              <tr><td><span class="tname">Yayasan Baitul Amanah</span><span class="tsub">Bogor · sejak Mar 2025</span></td>
+                <td>Akta, NPWP, SK Kemenkumham</td><td>Atas nama yayasan</td><td>4</td>
+                <td><span class="pill p-ok">Terverifikasi</span></td>
+                <td><button class="btn b-gh b-sm" onclick="toast('adm','Riwayat pemeriksaan dibuka')">Riwayat</button></td></tr>
+            </table>
+          </div>
+          <div class="card" style="background:#F4F8F6">
+            <div class="card-b" style="font-size:12.5px;color:#42544E;line-height:1.6">
+              <b>Aturan yang dijalankan sistem:</b> rekening pencairan wajib atas nama badan hukum, dokumen legalitas wajib lengkap, dan setiap keputusan verifikasi tercatat dalam jejak audit beserta identitas admin dan waktunya.
+            </div>
+          </div>
+        </div>
+
+        <!-- Moderasi program -->
+        <div class="wpage" id="p-adm-mod">
+          <div class="wtop"><div><h2>Moderasi program</h2><p>Program baru tidak tayang sebelum ditinjau. Fokus pemeriksaan: kejelasan rincian kebutuhan dan kewajaran target.</p></div></div>
+          <div class="card">
+            <table class="t" id="tblMod">
+              <tr><th>Program</th><th>Lembaga</th><th>Target</th><th>Rincian kebutuhan</th><th>Status</th><th>Tindakan</th></tr>
+              <tr><td><span class="tname">Perbaikan tempat wudu</span><span class="tsub">Diajukan 17 Agu</span></td><td>Yayasan Baitul Amanah</td><td>Rp18.000.000</td>
+                <td><span class="pill p-ok">Lengkap</span></td><td><span class="pill p-new">Menunggu</span></td>
+                <td><div style="display:flex;gap:6px"><button class="btn b-em b-sm" onclick="moder(this,'ok')">Tayangkan</button><button class="btn b-bad b-sm" onclick="moder(this,'no')">Kembalikan</button></div></td></tr>
+              <tr><td><span class="tname">Santunan 120 anak yatim</span><span class="tsub">Diajukan 17 Agu</span></td><td>Rumah Tahfiz Al-Hikmah</td><td>Rp60.000.000</td>
+                <td><span class="pill p-wait">Rincian kurang</span></td><td><span class="pill p-new">Menunggu</span></td>
+                <td><div style="display:flex;gap:6px"><button class="btn b-em b-sm" onclick="moder(this,'ok')">Tayangkan</button><button class="btn b-bad b-sm" onclick="moder(this,'no')">Kembalikan</button></div></td></tr>
+              <tr><td><span class="tname">Pengadaan ambulans desa</span><span class="tsub">Diajukan 16 Agu</span></td><td>Yayasan Air Untuk Negeri</td><td>Rp410.000.000</td>
+                <td><span class="pill p-ok">Lengkap</span></td><td><span class="pill p-new">Menunggu</span></td>
+                <td><div style="display:flex;gap:6px"><button class="btn b-em b-sm" onclick="moder(this,'ok')">Tayangkan</button><button class="btn b-bad b-sm" onclick="moder(this,'no')">Kembalikan</button></div></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pencairan -->
+        <div class="wpage" id="p-adm-cair">
+          <div class="wtop"><div><h2>Persetujuan pencairan</h2><p>Pencairan hanya disetujui bila laporan tahap sebelumnya sudah terbit.</p></div></div>
+          <div class="card">
+            <table class="t">
+              <tr><th>Lembaga</th><th>Program</th><th>Nominal</th><th>Laporan sebelumnya</th><th>Tindakan</th></tr>
+              <tr><td>Yayasan Baitul Amanah</td><td>Renovasi atap Masjid Al-Ikhlas</td><td><b>Rp14.000.000</b></td>
+                <td><span class="pill p-ok">Tahap 2 terbit</span></td>
+                <td><button class="btn b-em b-sm" onclick="cair(this,1)">Setujui pencairan</button></td></tr>
+              <tr><td>Pesantren Nurul Fikri</td><td>Beasiswa 40 santri</td><td><b>Rp10.000.000</b></td>
+                <td><span class="pill p-ok">Tahap 1 terbit</span></td>
+                <td><button class="btn b-em b-sm" onclick="cair(this,1)">Setujui pencairan</button></td></tr>
+              <tr><td>Yayasan Baitul Amanah</td><td>Nasi Jumat berkah</td><td><b>Rp2.500.000</b></td>
+                <td><span class="pill p-bad">Belum ada laporan</span></td>
+                <td><button class="btn b-gh b-sm" onclick="toast('adm','Pencairan tidak dapat disetujui sebelum laporan terbit')">Tidak dapat disetujui</button></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Transaksi -->
+        <div class="wpage" id="p-adm-trx">
+          <div class="wtop"><div><h2>Transaksi &amp; rekonsiliasi</h2><p>Pencocokan penerimaan di sistem dengan catatan penyedia pembayaran, per batch harian.</p></div>
+            <div class="acts"><button class="btn b-gh" onclick="toast('adm','Berkas rekonsiliasi diunduh')">Unduh CSV</button></div></div>
+          <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+            <div class="kpi dark"><b>Rp8,4 jt</b><span>Penerimaan hari ini</span></div>
+            <div class="kpi"><b>412</b><span>Transaksi berhasil</span></div>
+            <div class="kpi"><b>Rp340.000</b><span>Selisih belum cocok</span></div>
+          </div>
+          <div class="card">
+            <table class="t">
+              <tr><th>Batch</th><th>Metode</th><th>Transaksi</th><th>Nilai sistem</th><th>Nilai penyedia</th><th>Status</th></tr>
+              <tr><td>18 Agu 2026</td><td>QRIS</td><td>206</td><td>Rp4.120.000</td><td>Rp3.780.000</td><td><span class="pill p-wait">Selisih Rp340.000</span></td></tr>
+              <tr><td>18 Agu 2026</td><td>Virtual account</td><td>84</td><td>Rp2.960.000</td><td>Rp2.960.000</td><td><span class="pill p-ok">Cocok</span></td></tr>
+              <tr><td>18 Agu 2026</td><td>E-wallet</td><td>122</td><td>Rp1.320.000</td><td>Rp1.320.000</td><td><span class="pill p-ok">Cocok</span></td></tr>
+              <tr><td>17 Agu 2026</td><td>Semua metode</td><td>388</td><td>Rp7.640.000</td><td>Rp7.640.000</td><td><span class="pill p-ok">Cocok</span></td></tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pengguna -->
+        <div class="wpage" id="p-adm-usr">
+          <div class="wtop"><div><h2>Pengguna &amp; peran</h2><p>Setiap peran punya batas kewenangan. Admin platform tidak dapat mengubah isi laporan yang diunggah lembaga.</p></div>
+            <div class="acts"><button class="btn b-gold" onclick="toast('adm','Undangan dikirim ke alamat email')">Undang pengguna</button></div></div>
+          <div class="card">
+            <table class="t">
+              <tr><th>Nama</th><th>Peran</th><th>Kewenangan</th><th>Aktivitas terakhir</th></tr>
+              <tr><td><span class="tname">Nadia Rahmawati</span><span class="tsub">nadia@jusi.com</span></td><td><span class="pill p-new">Admin platform</span></td><td>Verifikasi, moderasi, persetujuan pencairan</td><td>Hari ini 09.12</td></tr>
+              <tr><td><span class="tname">Fajar Nugroho</span><span class="tsub">fajar@jusi.com</span></td><td><span class="pill p-mut">Keuangan</span></td><td>Rekonsiliasi dan laporan keuangan</td><td>Hari ini 08.40</td></tr>
+              <tr><td><span class="tname">Munir Abdullah</span><span class="tsub">Yayasan Baitul Amanah</span></td><td><span class="pill p-ok">Pengelola lembaga</span></td><td>Program dan laporan lembaganya sendiri</td><td>Kemarin 16.55</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-adm">
+      <div class="modal-box">
+        <div class="modal-h"><b id="madmT">Judul</b><p id="madmP">Deskripsi</p></div>
+        <div class="modal-b" id="madmB"></div>
+        <div class="modal-f">
+          <button class="btn b-gh" onclick="closeModal('adm')">Batal</button>
+          <button class="btn b-gold" id="madmOk">Konfirmasi</button>
+        </div>
+      </div>
+    </div>
+    <div class="toast" id="toast-adm"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg><span></span></div>
+  </div>
+  </div>
+</section>
+
+<script>
+/* ============ pergantian produk ============ */
+function switchProd(p){
+  document.querySelectorAll('.stage').forEach(s=>s.classList.remove('on'));
+  document.getElementById('stage-'+p).classList.add('on');
+  document.querySelectorAll('.prodtab').forEach(t=>t.classList.toggle('on',t.dataset.prod===p));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.prodtab').forEach(t=>t.onclick=()=>switchProd(t.dataset.prod));
+
+/* ============ APLIKASI ============ */
+const TABS=['home','explore','ibadah','account'];
+const FULL=['detail','amount','pay','success','routine','quran','reader','qibla','zakat','mosque','notif'];
+const DARK=['success','ibadah','impact','account','home'];
+let cur='home', hist=['home'];
+
+function go(id,isBack){
+  const el=document.getElementById('s-'+id); if(!el) return;
+  const c=document.getElementById('s-'+cur); if(c) c.classList.remove('act');
+  el.classList.add('act'); el.scrollTop=0; cur=id;
+  if(!isBack && hist[hist.length-1]!==id) hist.push(id);
+  document.getElementById('tabbar').classList.toggle('hide',FULL.includes(id));
+  document.getElementById('sbar').classList.toggle('light',DARK.includes(id));
+  document.querySelectorAll('.tb').forEach(t=>t.classList.toggle('on',t.dataset.tab===id));
+}
+function back(){ hist.pop(); go(hist[hist.length-1]||'home',true); }
+
+/* rantai jumat */
+const STAR='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 4.2 4.8-1.2-1.2 4.8L22 12l-3.9 2.4 1.2 4.8-4.8-1.2L12 22l-2.5-4.2-4.8 1.2 1.2-4.8L2 12l3.9-2.4-1.2-4.8 4.8 1.2z"/></svg>';
+let streak=12;
+function drawStars(){
+  const s=document.getElementById('stars'); s.innerHTML='';
+  for(let i=0;i<12;i++){
+    s.insertAdjacentHTML('beforeend',STAR);
+    s.lastElementChild.classList.add(i<streak-1?'on':'nx');
+  }
+  document.getElementById('stN').textContent=streak;
+}
+drawStars();
+
+/* hitung mundur jumat */
+function nextFriday(){
+  const n=new Date(), d=new Date(n);
+  d.setDate(n.getDate()+((5-n.getDay()+7)%7)); d.setHours(4,30,0,0);
+  if(d<=n) d.setDate(d.getDate()+7);
+  return d;
+}
+function tick(){
+  const t=nextFriday()-new Date();
+  const day=Math.floor(t/864e5), hr=Math.floor(t%864e5/36e5), mn=Math.floor(t%36e5/6e4);
+  document.getElementById('cdDays').textContent=day;
+  document.getElementById('cdClock').innerHTML=`tersisa <b>${day} hari ${hr} jam ${mn} menit</b>`;
+  document.getElementById('cdProg').style.strokeDashoffset=(251.3*(t/(7*864e5))).toFixed(1);
+  const c=new Date();
+  document.getElementById('clock').textContent=String(c.getHours()).padStart(2,'0')+'.'+String(c.getMinutes()).padStart(2,'0');
+}
+tick(); setInterval(tick,20000);
+
+/* kontrol kecil */
+function seg2(name,btn){
+  if(btn){btn.parentElement.querySelectorAll('.seg').forEach(s=>s.classList.remove('on'));btn.classList.add('on');}
+  else{
+    const segs=document.querySelectorAll('#s-detail .seg');
+    segs.forEach(s=>s.classList.remove('on'));
+    ({cerita:segs[0],jejak:segs[1],donatur:segs[2]})[name].classList.add('on');
+  }
+  document.querySelectorAll('#s-detail .tp').forEach(p=>p.classList.remove('on'));
+  document.getElementById('tp-'+name).classList.add('on');
+}
+function pick(el){ el.parentElement.querySelectorAll('.pay').forEach(p=>p.classList.remove('on')); el.classList.add('on'); }
+function tog(row){ row.querySelector('.sw').classList.toggle('on'); }
+function bell(el){ el.classList.toggle('off'); toast(el.classList.contains('off')?'Pengingat dimatikan':'Pengingat dinyalakan'); }
+function openCat(name){ go('explore'); toast('Menyaring kategori '+name); }
+
+function chipGroup(id,cb){
+  const g=document.getElementById(id); if(!g) return;
+  g.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    g.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on'); if(cb) cb(c);
+  });
+}
+const num=s=>parseInt(String(s).replace(/\D/g,''),10)||0;
+const rp=n=>'Rp'+n.toLocaleString('id-ID');
+chipGroup('chips',c=>{document.getElementById('amt').value=c.dataset.v;sync();});
+chipGroup('chips2'); chipGroup('tips',sync); chipGroup('ztype');
+document.querySelectorAll('#filters .chip').forEach(c=>c.onclick=()=>{
+  document.querySelectorAll('#filters .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on');
+});
+
+function sync(){
+  const a=num(document.getElementById('amt').value);
+  const tipEl=document.querySelector('#tips .chip.on');
+  const tip=tipEl?num(tipEl.dataset.t):0;
+  document.getElementById('sumAmt').textContent=rp(a);
+  document.getElementById('sumTip').textContent=rp(tip);
+  document.getElementById('sumTot').textContent=rp(a+tip);
+  document.getElementById('payBtn').textContent='Bayar '+rp(a+tip);
+  document.getElementById('succTxt').textContent=rp(a+tip)+' sudah masuk ke program Renovasi atap Masjid Al-Ikhlas.';
+}
+document.getElementById('amt').addEventListener('input',e=>{
+  const v=num(e.target.value); e.target.value=v?v.toLocaleString('id-ID'):'';
+  document.querySelectorAll('#chips .chip').forEach(c=>c.classList.toggle('on',num(c.dataset.v)===v));
+  sync();
+});
+sync();
+
+function pay(){
+  const b=document.getElementById('payBtn'), t=b.textContent;
+  b.textContent='Memproses…';
+  document.getElementById('succPay').textContent=document.querySelector('#s-pay .pay.on b').textContent;
+  setTimeout(()=>{ b.textContent=t; streak=13; drawStars(); go('success'); },900);
+}
+function activate(){ document.getElementById('rtPill').textContent='Aktif'; toast('Jumat Rutin aktif — diingatkan tiap Kamis 19.00'); setTimeout(()=>go('home'),900); }
+
+/* kalkulator zakat */
+function hitungZakat(){
+  const inc=num(document.getElementById('zIncome').value)+num(document.getElementById('zOther').value);
+  const need=num(document.getElementById('zNeed').value);
+  const net=Math.max(inc-need,0), nisab=6900000, z=Math.round(net*0.025);
+  document.getElementById('zOut').textContent=net>=nisab?rp(z):'Rp0';
+  document.getElementById('zNote').textContent = net>=nisab
+    ? 'Penghasilan bersih '+rp(net)+' per bulan, di atas nisab '+rp(nisab)+'. Zakat wajib ditunaikan.'
+    : 'Penghasilan bersih '+rp(net)+' masih di bawah nisab '+rp(nisab)+'. Belum wajib zakat — sedekah tetap dianjurkan.';
+}
+['zIncome','zOther','zNeed'].forEach(id=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',e=>{
+    const v=num(e.target.value); e.target.value=v?v.toLocaleString('id-ID'):'';
+    hitungZakat();
+  });
+});
+hitungZakat();
+
+/* ============ KONSOL WEB ============ */
+function wgo(w,page,btn){
+  document.querySelectorAll('#main-'+w+' .wpage').forEach(p=>p.classList.remove('act'));
+  const el=document.getElementById('p-'+page); if(el) el.classList.add('act');
+  document.getElementById('main-'+w).scrollTop=0;
+  const side=document.querySelector('#stage-'+w+' .side');
+  if(btn){ side.querySelectorAll('.snav').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+  else{
+    side.querySelectorAll('.snav').forEach(b=>b.classList.toggle('on',(b.getAttribute('onclick')||'').includes("'"+page+"'")));
+  }
+}
+function openModal(w,title,desc,body,okLabel,onOk){
+  document.getElementById('m'+w+'T').textContent=title;
+  document.getElementById('m'+w+'P').textContent=desc;
+  document.getElementById('m'+w+'B').innerHTML=body||'';
+  const ok=document.getElementById('m'+w+'Ok');
+  ok.textContent=okLabel;
+  ok.onclick=()=>{closeModal(w); onOk&&onOk();};
+  document.getElementById('modal-'+w).classList.add('on');
+}
+function closeModal(w){ document.getElementById('modal-'+w).classList.remove('on'); }
+
+/* aksi dashboard lembaga */
+function submitProg(){
+  openModal('lem','Kirim program untuk moderasi?',
+    'Program akan ditinjau admin JUSI sebelum tayang. Kamu akan diberi tahu bila ada yang perlu dilengkapi.',
+    '','Kirim sekarang',()=>{ toast('lem','Program dikirim — menunggu moderasi'); wgo('lem','lem-prog'); });
+}
+function terbitkan(){
+  const amt=document.getElementById('lapAmt').value;
+  openModal('lem','Terbitkan laporan tahap 3?',
+    'Laporan langsung tampil di Jejak Dana dan notifikasi terkirim ke 218 donatur. Laporan yang sudah terbit tidak dapat dihapus.',
+    '','Terbitkan',()=>{
+      const tl=document.getElementById('traceLem');
+      const open=tl.querySelector('.tl-i.open');
+      open.classList.remove('open');
+      open.innerHTML='<b>Rp'+amt+' dibelanjakan</b><small>Hari ini · Tahap 3 · terbit</small><p>'+
+        document.getElementById('lapNote').value+'</p>';
+      toast('lem','Laporan terbit — 218 donatur diberi tahu');
+    });
+}
+function ajukanCair(){
+  openModal('lem','Ajukan pencairan Rp14.000.000?',
+    'Pencairan diperiksa admin JUSI dan hanya disetujui bila laporan tahap sebelumnya sudah terbit. Dana masuk dalam 1 hari kerja.',
+    '','Ajukan',()=>toast('lem','Pengajuan pencairan terkirim'));
+}
+function balas(btn){
+  openModal('lem','Balas doa donatur',
+    'Balasan tampil di halaman program pada aplikasi donatur.',
+    '<div class="fld"><label>Balasan kamu</label><textarea rows="3">Aamiin, terima kasih. Doa yang sama untuk Bapak/Ibu sekeluarga.</textarea></div>',
+    'Kirim balasan',()=>{ btn.textContent='Dibalas'; btn.className='btn b-gh b-sm'; btn.disabled=true; toast('lem','Balasan terkirim'); });
+}
+
+/* aksi panel admin */
+function verif(btn,mode){
+  const row=btn.closest('tr'), nama=row.querySelector('.tname').textContent;
+  if(mode==='ok'){
+    openModal('adm','Setujui '+nama+'?','Lembaga langsung dapat menerima donasi. Keputusan ini tercatat dalam jejak audit beserta identitas kamu.','','Setujui',()=>{
+      row.querySelector('.pill').outerHTML='<span class="pill p-ok">Terverifikasi</span>';
+      row.lastElementChild.innerHTML='<button class="btn b-gh b-sm">Riwayat</button>';
+      bump('badgeVer'); toast('adm',nama+' terverifikasi');
+    });
+  }else{
+    openModal('adm','Tolak '+nama+'?','Pengurus lembaga menerima alasan penolakan dan dapat mengajukan ulang setelah diperbaiki.',
+      '<div class="fld"><label>Alasan penolakan</label><textarea rows="3">Rekening pencairan masih atas nama perorangan. Mohon gunakan rekening atas nama badan hukum.</textarea></div>',
+      'Kirim penolakan',()=>{
+        row.querySelector('.pill').outerHTML='<span class="pill p-bad">Ditolak</span>';
+        row.lastElementChild.innerHTML='<button class="btn b-gh b-sm">Riwayat</button>';
+        bump('badgeVer'); toast('adm','Penolakan terkirim ke '+nama);
+      });
+  }
+}
+function moder(btn,mode){
+  const row=btn.closest('tr'), nama=row.querySelector('.tname').textContent;
+  if(mode==='ok'){
+    openModal('adm','Tayangkan program ini?','Program "'+nama+'" langsung tampil di aplikasi donatur dan mulai menerima donasi.','','Tayangkan',()=>{
+      row.querySelectorAll('.pill')[1].outerHTML='<span class="pill p-ok">Tayang</span>';
+      row.lastElementChild.innerHTML='<button class="btn b-gh b-sm">Lihat</button>';
+      bump('badgeMod'); toast('adm','Program tayang di aplikasi');
+    });
+  }else{
+    openModal('adm','Kembalikan ke lembaga?','Lembaga dapat memperbaiki dan mengajukan ulang tanpa membuat program baru.',
+      '<div class="fld"><label>Catatan untuk lembaga</label><textarea rows="3">Rincian kebutuhan belum dipecah per komponen. Mohon lampirkan estimasi biaya per item.</textarea></div>',
+      'Kembalikan',()=>{
+        row.querySelectorAll('.pill')[1].outerHTML='<span class="pill p-wait">Dikembalikan</span>';
+        row.lastElementChild.innerHTML='<button class="btn b-gh b-sm">Lihat</button>';
+        bump('badgeMod'); toast('adm','Catatan terkirim ke lembaga');
+      });
+  }
+}
+function cair(btn){
+  const row=btn.closest('tr'), nom=row.querySelector('b').textContent;
+  openModal('adm','Setujui pencairan '+nom+'?','Dana ditransfer ke rekening badan hukum lembaga dan tercatat pada riwayat pencairan.','','Setujui',()=>{
+    btn.outerHTML='<span class="pill p-ok">Disetujui — diproses</span>';
+    toast('adm','Pencairan '+nom+' disetujui');
+  });
+}
+function bump(id){
+  const b=document.getElementById(id); if(!b) return;
+  const n=Math.max(parseInt(b.textContent,10)-1,0);
+  if(n===0) b.remove(); else b.textContent=n;
+}
+
+/* ============ toast bersama ============ */
+const timers={};
+function toast(a,b){
+  const w = b===undefined ? 'app' : a;
+  const msg = b===undefined ? a : b;
+  const t=document.getElementById('toast-'+w);
+  t.querySelector('span').textContent=msg;
+  t.classList.add('show'); clearTimeout(timers[w]);
+  timers[w]=setTimeout(()=>t.classList.remove('show'),2400);
+}
+</script>
+</body>
+</html>
